@@ -1,0 +1,6373 @@
+`requirements.txt`
+
+
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.11.7
+pydantic-settings==2.10.1
+
+langchain==0.3.27
+langchain-core==0.3.74
+langchain-community==0.3.29
+langchain-text-splitters==0.3.9
+langchain-ollama==0.3.7
+
+ollama==0.5.3
+faiss-cpu==1.12.0
+
+pypdf==6.0.0
+
+python-dotenv==1.1.1
+python-multipart==0.0.20
+
+requests==2.32.5
+httpx==0.28.1
+
+streamlit==1.49.1
+
+numpy==2.3.2
+pandas==2.3.2
+
+pytest==8.4.2
+
+
+## What each package is used for
+
+| Package             | Purpose                   |
+| ------------------- | ------------------------- |
+| FastAPI             | Backend API               |
+| Uvicorn             | FastAPI server            |
+| Pydantic            | Data validation           |
+| Pydantic-settings   | Environment configuration |
+| LangChain           | RAG framework             |
+| LangChain Core      | Core interfaces           |
+| LangChain Community | FAISS, document loaders   |
+| Text Splitters      | Chunking documents        |
+| LangChain Ollama    | Connect to Ollama         |
+| Ollama              | Local LLM client          |
+| FAISS               | Vector database           |
+| PyPDF               | Read PDF files            |
+| python-dotenv       | Load `.env`               |
+| python-multipart    | File upload               |
+| requests/httpx      | HTTP requests             |
+| Streamlit           | Frontend UI               |
+| NumPy               | Numerical operations      |
+| Pandas              | Data processing           |
+| pytest              | Testing                   |
+
+## Features you can build
+
+✅ Upload PDF
+
+✅ Extract text
+
+✅ Split into chunks
+
+✅ Generate embeddings using Ollama
+
+✅ Store embeddings in FAISS
+
+✅ Semantic search
+
+✅ Retrieve relevant chunks
+
+✅ Send context to LLM
+
+✅ Generate answer
+
+✅ FastAPI backend
+
+✅ Streamlit frontend
+
+✅ Local RAG (offline after models are downloaded)
+
+---
+
+## Optional packages for a more production-ready project
+
+If you want logging, monitoring, and better performance, consider adding:
+
+
+tqdm==4.67.1          # Progress bars
+orjson==3.11.2        # Faster JSON
+aiofiles==24.1.0      # Async file operations
+
+
+If you plan to use Hugging Face embeddings instead of Ollama:
+
+
+sentence-transformers
+transformers
+torch
+
+
+If you later switch from FAISS to Chroma:
+
+
+chromadb
+
+
+---
+
+## Project architecture this supports
+
+
+rag-project/
+│
+├── app.py
+├── config.py
+├── requirements.txt
+├── .env
+│
+├── api/
+│   ├── upload.py
+│   └── chat.py
+│
+├── loaders/
+│   └── pdf_loader.py
+│
+├── splitter/
+│   └── text_splitter.py
+│
+├── embeddings/
+│   └── embedding_model.py
+│
+├── vectorstore/
+│   └── faiss_store.py
+│
+├── llm/
+│   └── chat_model.py
+│
+├── services/
+│   └── rag_service.py
+│
+├── uploads/
+│
+├── faiss_index/
+│   ├── index.faiss
+│   └── index.pkl
+│
+├── tests/
+│
+└── streamlit_app.py
+
+
+### Overall
+
+For the RAG application you've been building with **FastAPI + Ollama + LangChain + FAISS + Streamlit**, this dependency list is complete and sufficient. You don't need additional packages unless you add features like Hugging Face embeddings, a different vector database, authentication, or observability.
+
+
+
+
+============================================
+
+
+
+APP_NAME=Enterprise RAG
+HOST=0.0.0.0
+PORT=8000
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.2:1b
+EMBEDDING_MODEL=nomic-embed-text:latest
+VECTOR_DB=faiss
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=ragdb
+POSTGRES_USER=raguser
+POSTGRES_PASSWORD=ragpassword
+REDIS_HOST=redis
+REDIS_PORT=6379
+UPLOAD_DIR=uploads
+VECTOR_DB_PATH=vector_db/faiss_index
+DOCUMENT_DIR=documents
+TOP_K=4
+OLLAMA_TEMPERATURE=0
+
+
+
+=============================================
+
+
+
+gemini
+
+GOOGLE_API_KEY=AQ.Ab8RN6IMZU7cY1pzs33Hrr40qQdHYyhmBfMZq8deVBqhDw3j-w
+
+
+
+
+from google import genai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+
+
+
+while True:
+    question = input("Ask : ")
+    if question.lower() == "exit":
+        print("Bye")
+        break
+    else:
+        interaction = client.interactions.create(
+        model="gemini-3.6-flash",
+        input=question
+        )
+    print(interaction.output_text)
+
+
+
+
+#==================================
+
+from ollama import chat
+
+response = chat(
+    model="llama3.2:1b",
+    messages=[
+        {
+            "role": "user",
+            "content": "Hello!"
+        }
+    ]
+)
+
+print(response.message.content)
+
+
+========================================
+
+
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+response = client.responses.create(
+    model="gpt-5.5",
+    input="Write a short bedtime story about a unicorn."
+)
+
+print(response.output_text)
+
+
+
+======================================
+
+
+LangChain + Ollama
+
+
+from langchain_community.chat_models import ChatOllama
+
+llm = ChatOllama(
+    model="llama3.2:1b",
+    temperature=0
+)
+
+response = llm.invoke("What is Retrieval-Augmented Generation (RAG)?")
+
+print(response.content)
+
+
+----------------------------------------------------------------------------
+
+
+
+What happens?
+Step 1: Import ChatOllama
+from langchain_community.chat_models import ChatOllama
+
+This imports LangChain's wrapper for Ollama.
+
+It allows LangChain to communicate with an Ollama model running on your computer.
+
+Step 2: Load the model
+llm = ChatOllama(
+    model="llama3.2:1b",
+    temperature=0
+)
+
+This tells LangChain:
+
+"Use the local Ollama model named llama3.2:1b."
+
+Internally it sends requests to the Ollama server (typically running at http://localhost:11434).
+
+Python
+    │
+    ▼
+LangChain
+    │
+    ▼
+Ollama
+    │
+    ▼
+Llama 3.2 1B model
+Step 3: Ask a question
+response = llm.invoke(
+    "What is Retrieval-Augmented Generation (RAG)?"
+)
+
+LangChain sends only this text to the model.
+
+"What is Retrieval-Augmented Generation (RAG)?"
+
+Nothing else.
+
+Step 4: Print the answer
+print(response.content)
+
+The model generates an answer based only on:
+
+its training data
+the prompt you provided
+
+
+
+--------------------------------------------------------------------
+
+
+Llama
+
+Llama is a Large Language Model trained by Meta.
+
+Examples include:
+
+Llama 3
+Llama 3.1
+Llama 3.2
+Llama 4
+
+A Llama model predicts the next token and generates responses to prompts.
+
+Ollama
+
+Ollama is software that lets you run AI models locally with simple commands.
+
+For example:
+
+ollama run llama3.2
+
+Here:
+
+ollama is the program.
+run is the command.
+llama3.2 is the model being executed.
+
+You can also use Ollama to run many other models besides Llama.
+
+
+-------------------------------------------------------------------
+
+
+
+| Feature                         | Your Code | RAG Pipeline |
+| ------------------------------- | --------- | ------------ |
+| Uses Ollama                     | ✅         | ✅            |
+| Uses LangChain                  | ✅         | ✅            |
+| Reads PDFs                      | ❌         | ✅            |
+| Uses FAISS/Chroma               | ❌         | ✅            |
+| Creates embeddings              | ❌         | ✅            |
+| Searches documents              | ❌         | ✅            |
+| Answers from internal documents | ❌         | ✅            |
+| Answers from model knowledge    | ✅         | ✅            |
+
+
+
+==========================================
+
+
+
+
+RAG Pipeline
+
+PDF
+  │
+  ▼
+PyPDFLoader
+  │
+  ▼
+Text Splitter
+  │
+  ▼
+Embeddings (nomic-embed-text)
+  │
+  ▼
+FAISS Vector DB
+  │
+  ▼
+Similarity Search
+  │
+  ▼
+Llama 3.2:1b
+  │
+  ▼
+Answer
+
+
+=====================================
+
+Embeddings
+
+from langchain_community.embeddings import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(
+    model="nomic-embed-text"
+)
+
+================================
+
+Chatbot (Streamlit)
+
+import streamlit as st
+from ollama import chat
+
+st.title("Llama Chatbot")
+
+question = st.text_input("Ask anything")
+
+if question:
+    response = chat(
+        model="llama3.2:1b",
+        messages=[
+            {"role": "user", "content": question}
+        ]
+    )
+
+    st.write(response.message.content)
+
+
+RUN:
+
+streamlit run app.py
+
+==================================
+
+
+
+
+
+
+
+
+
+
+
+
+part 1:
+
+
+
+We'll build a **production-ready Enterprise RAG Application** from scratch.
+
+# Part 1 – Project Setup
+
+---
+
+# Step 1: Create Project
+
+bash
+mkdir rag-enterprise
+cd rag-enterprise
+
+
+---
+
+# Step 2: Folder Structure
+
+
+rag-enterprise/
+│
+├── app.py
+├── streamlit_app.py
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+├── .env
+├── .gitignore
+├── README.md
+│
+├── config/
+│   ├── __init__.py
+│   ├── settings.py
+│   └── logging_config.py
+│
+├── api/
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── request_model.py
+│   └── response_model.py
+│
+├── services/
+│   ├── __init__.py
+│   ├── rag_service.py
+│   ├── retrieval_service.py
+│   ├── llm_service.py
+│   ├── embedding_service.py
+│   └── ingestion_service.py
+│
+├── vectorstore/
+│   ├── __init__.py
+│   ├── faiss_store.py
+│   ├── chroma_store.py
+│   └── vector_factory.py
+│
+├── loaders/
+│   ├── __init__.py
+│   ├── pdf_loader.py
+│   ├── docx_loader.py
+│   ├── csv_loader.py
+│   └── web_loader.py
+│
+├── chunking/
+│   ├── __init__.py
+│   └── splitter.py
+│
+├── embeddings/
+│   ├── __init__.py
+│   └── embedding_model.py
+│
+├── prompts/
+│   ├── __init__.py
+│   ├── rag_prompt.py
+│   └── system_prompt.py
+│
+├── models/
+│   ├── __init__.py
+│   └── ollama_model.py
+│
+├── database/
+│   ├── __init__.py
+│   ├── postgres.py
+│   └── history.py
+│
+├── cache/
+│   ├── __init__.py
+│   └── redis_cache.py
+│
+├── memory/
+│   ├── __init__.py
+│   └── conversation_memory.py
+│
+├── uploads/
+│
+├── documents/
+│
+├── vector_db/
+│
+├── logs/
+│
+├── tests/
+│
+└── utils/
+    ├── __init__.py
+    ├── helper.py
+    ├── constants.py
+    └── validators.py
+
+
+---
+
+# Step 3: requirements.txt
+
+txt
+fastapi==0.116.1
+uvicorn==0.35.0
+
+streamlit==1.48.0
+
+langchain==0.3.27
+langchain-core==0.3.74
+langchain-community==0.3.29
+langchain-text-splitters==0.3.9
+langchain-ollama==0.3.7
+
+ollama==0.5.3
+
+faiss-cpu==1.12.0
+
+chromadb==1.0.20
+
+sentence-transformers==5.1.0
+
+pypdf==6.0.0
+
+python-docx==1.2.0
+
+pandas==2.3.2
+
+numpy==2.3.2
+
+redis==6.4.0
+
+sqlalchemy==2.0.43
+
+psycopg2-binary==2.9.10
+
+python-dotenv==1.1.1
+
+python-multipart==0.0.20
+
+httpx==0.28.1
+
+tiktoken==0.11.0
+
+pytest==8.4.2
+
+
+---
+
+# Step 4: .env
+
+ini
+APP_NAME=Enterprise RAG
+
+HOST=0.0.0.0
+
+PORT=8000
+
+OLLAMA_BASE_URL=http://ollama:11434
+
+OLLAMA_MODEL=llama3.2
+
+EMBEDDING_MODEL=nomic-embed-text
+
+VECTOR_DB=faiss
+
+POSTGRES_HOST=postgres
+
+POSTGRES_PORT=5432
+
+POSTGRES_DB=ragdb
+
+POSTGRES_USER=raguser
+
+POSTGRES_PASSWORD=ragpassword
+
+REDIS_HOST=redis
+
+REDIS_PORT=6379
+
+UPLOAD_DIR=uploads
+
+VECTOR_DB_PATH=vector_db/faiss_index
+
+
+---
+
+# Step 5: .gitignore
+
+gitignore
+__pycache__/
+
+*.pyc
+
+.env
+
+logs/
+
+vector_db/
+
+uploads/
+
+venv/
+
+.idea/
+
+.vscode/
+
+
+---
+
+# Step 6: Dockerfile
+
+dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn","app:app","--host","0.0.0.0","--port","8000"]
+
+
+---
+
+# Step 7: docker-compose.yml
+
+yaml
+version: "3.9"
+
+services:
+
+  ollama:
+
+    image: ollama/ollama
+
+    container_name: ollama
+
+    ports:
+      - "11434:11434"
+
+    volumes:
+      - ollama:/root/.ollama
+
+  postgres:
+
+    image: postgres:16
+
+    container_name: postgres
+
+    environment:
+      POSTGRES_DB: ragdb
+      POSTGRES_USER: raguser
+      POSTGRES_PASSWORD: ragpassword
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+
+    image: redis:7
+
+    container_name: redis
+
+    ports:
+      - "6379:6379"
+
+  rag:
+
+    build: .
+
+    container_name: rag
+
+    depends_on:
+      - postgres
+      - redis
+      - ollama
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+volumes:
+
+  postgres:
+
+  ollama:
+
+
+---
+
+# Step 8: README.md
+
+markdown
+# Enterprise RAG
+
+Production Ready RAG using
+
+FastAPI
+
+Streamlit
+
+Ollama
+
+FAISS
+
+Redis
+
+PostgreSQL
+
+Docker
+
+LangChain
+
+
+---
+
+# Step 9: Install Packages
+
+bash
+python -m venv venv
+
+
+Windows
+
+bash
+venv\Scripts\activate
+
+
+Linux
+
+bash
+source venv/bin/activate
+
+
+Install dependencies:
+
+bash
+pip install -r requirements.txt
+
+
+---
+
+# Step 10: Pull Ollama Models
+
+bash
+ollama pull llama3.2
+
+
+bash
+ollama pull nomic-embed-text
+
+
+Verify:
+
+bash
+ollama list
+
+
+Expected:
+
+
+llama3.2
+
+nomic-embed-text
+
+
+---
+
+# Step 11: Run with Docker
+
+bash
+docker compose up --build
+
+
+---
+
+## What we'll build in Part 2
+
+We'll start implementing the code for the `config` package:
+
+* `config/settings.py`
+* `config/logging_config.py`
+
+These files will load environment variables, initialize application settings, and configure centralized logging for the entire RAG application.
+
+
+
+
+
+
+
+
+===============================
+
+
+
+Part 2
+
+
+In **Part 2**, we'll build the **configuration layer**, which every other module (FastAPI, LangChain, FAISS, Ollama, PostgreSQL, Redis) will use.
+
+---
+
+# config/settings.py
+
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+
+    APP_NAME: str
+
+    HOST: str
+
+    PORT: int
+
+    OLLAMA_BASE_URL: str
+
+    OLLAMA_MODEL: str
+
+    EMBEDDING_MODEL: str
+
+    VECTOR_DB: str
+
+    VECTOR_DB_PATH: str
+
+    POSTGRES_HOST: str
+
+    POSTGRES_PORT: int
+
+    POSTGRES_DB: str
+
+    POSTGRES_USER: str
+
+    POSTGRES_PASSWORD: str
+
+    REDIS_HOST: str
+
+    REDIS_PORT: int
+
+    UPLOAD_DIR: str
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore"
+    )
+
+
+settings = Settings()
+
+
+---
+
+# config/logging_config.py
+
+
+import logging
+import os
+
+from logging.handlers import RotatingFileHandler
+
+LOG_DIR = "logs"
+
+os.makedirs(LOG_DIR, exist_ok=True)
+
+LOG_FILE = os.path.join(LOG_DIR, "app.log")
+
+
+def setup_logger():
+
+    logger = logging.getLogger("RAG")
+
+    logger.setLevel(logging.INFO)
+
+    if logger.handlers:
+        return logger
+
+    formatter = logging.Formatter(
+        "%(asctime)s | %(levelname)s | %(filename)s | %(message)s"
+    )
+
+    file_handler = RotatingFileHandler(
+        LOG_FILE,
+        maxBytes=5 * 1024 * 1024,
+        backupCount=5
+    )
+
+    file_handler.setFormatter(formatter)
+
+    console_handler = logging.StreamHandler()
+
+    console_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+
+    return logger
+
+
+logger = setup_logger()
+
+
+---
+
+# config/**init**.py
+
+
+from .settings import settings
+from .logging_config import logger
+
+
+---
+
+# Install the missing dependency
+
+Since `settings.py` uses `pydantic-settings`, add it to your project.
+
+### requirements.txt
+
+
+pydantic==2.11.7
+pydantic-settings==2.10.1
+
+
+or install directly:
+
+bash
+pip install pydantic pydantic-settings
+
+
+---
+
+# How to use the settings
+
+Example:
+
+
+from config import settings
+
+print(settings.OLLAMA_MODEL)
+print(settings.POSTGRES_DB)
+
+
+Output:
+
+
+llama3.2
+ragdb
+
+
+---
+
+# How to use the logger
+
+Example:
+
+
+from config import logger
+
+logger.info("Application started")
+
+logger.warning("Low disk space")
+
+logger.error("Database connection failed")
+
+
+Console and `logs/app.log`:
+
+
+2026-08-06 12:10:35 | INFO | app.py | Application started
+2026-08-06 12:10:36 | WARNING | app.py | Low disk space
+2026-08-06 12:10:37 | ERROR | app.py | Database connection failed
+
+
+---
+
+# Project structure after Part 2
+
+
+rag-enterprise/
+│
+├── config/
+│   ├── __init__.py
+│   ├── settings.py
+│   └── logging_config.py
+│
+├── logs/
+│   └── app.log
+│
+├── .env
+├── requirements.txt
+└── ...
+
+
+---
+
+# What's next (Part 3)
+
+We'll implement the **document loading layer**:
+
+* `loaders/pdf_loader.py`
+* `loaders/docx_loader.py`
+* `loaders/csv_loader.py`
+* `loaders/web_loader.py`
+
+These modules will load documents from PDFs, Word files, CSVs, and web pages into a common format ready for chunking and embedding.
+
+
+
+Good question. `__init__.py` is used to tell Python that a directory should be treated as a **package**. It also lets you control what gets imported when someone imports the package.
+
+## Without `__init__.py`
+
+Suppose you have:
+
+
+rag-enterprise/
+│
+├── config/
+│   ├── settings.py
+│   └── logging_config.py
+
+
+To use `settings`, you write:
+
+
+from config.settings import settings
+from config.logging_config import logger
+
+
+This works in modern Python (3.3+) because of namespace packages, but you don't have a central place to initialize or expose common objects.
+
+---
+
+## With `__init__.py`
+
+
+config/
+│
+├── __init__.py
+├── settings.py
+└── logging_config.py
+
+
+**config/**init**.py**
+
+
+from .settings import settings
+from .logging_config import logger
+
+
+Now you can simply write:
+
+
+from config import settings, logger
+
+
+instead of:
+
+
+from config.settings import settings
+from config.logging_config import logger
+
+
+This is cleaner and easier to maintain.
+
+---
+
+## Another Example
+
+Without `__init__.py`
+
+
+utils/
+│
+├── helper.py
+└── validator.py
+
+
+Import:
+
+
+from utils.helper import read_file
+from utils.validator import validate_pdf
+
+
+With `__init__.py`
+
+
+from .helper import read_file
+from .validator import validate_pdf
+
+
+Now:
+
+
+from utils import read_file, validate_pdf
+
+
+---
+
+## Real-world use
+
+Frameworks and large projects commonly use `__init__.py` to:
+
+* Expose frequently used classes and functions.
+* Initialize package-level configuration.
+* Define package metadata such as `__version__`.
+* Keep imports organized and consistent.
+
+For example:
+
+
+# database/__init__.py
+
+from .postgres import Database
+from .history import ChatHistory
+
+
+Then elsewhere:
+
+
+from database import Database, ChatHistory
+
+
+instead of:
+
+
+from database.postgres import Database
+from database.history import ChatHistory
+
+
+---
+
+## Should every folder have `__init__.py`?
+
+For a production project, it's a good practice to include it in folders that contain Python modules, such as:
+
+
+config/
+services/
+loaders/
+vectorstore/
+database/
+memory/
+cache/
+utils/
+api/
+
+
+You **don't** need `__init__.py` in folders that only store data or assets, such as:
+
+
+documents/
+uploads/
+logs/
+vector_db/
+tests/   # optional; many projects omit it unless tests are imported as a package
+
+
+For enterprise applications, using `__init__.py` consistently makes imports cleaner, improves readability, and keeps the project structure organized.
+
+
+===================================================
+
+
+
+Part 3
+
+
+In **Part 3**, we'll build the **Document Loader** layer.
+
+The purpose of this layer is to load documents from different sources and return them in a common format (`Document` objects) so the chunking and embedding stages don't need to care whether the data came from a PDF, DOCX, CSV, or website.
+
+---
+
+# Folder Structure
+
+
+loaders/
+│
+├── __init__.py
+├── pdf_loader.py
+├── docx_loader.py
+├── csv_loader.py
+└── web_loader.py
+
+
+---
+
+# 1. pdf_loader.py
+
+
+from pathlib import Path
+
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_core.documents import Document
+
+from config import logger
+
+
+class PDFLoader:
+
+    def load(self, file_path: str) -> list[Document]:
+
+        path = Path(file_path)
+
+        if not path.exists():
+            raise FileNotFoundError(file_path)
+
+        logger.info(f"Loading PDF: {file_path}")
+
+        loader = PyPDFLoader(str(path))
+
+        documents = loader.load()
+
+        logger.info(f"Loaded {len(documents)} pages")
+
+        return documents
+
+
+---
+
+# 2. docx_loader.py
+
+
+from pathlib import Path
+
+from langchain_community.document_loaders import Docx2txtLoader
+from langchain_core.documents import Document
+
+from config import logger
+
+
+class DocxLoader:
+
+    def load(self, file_path: str) -> list[Document]:
+
+        path = Path(file_path)
+
+        if not path.exists():
+            raise FileNotFoundError(file_path)
+
+        logger.info(f"Loading DOCX: {file_path}")
+
+        loader = Docx2txtLoader(str(path))
+
+        documents = loader.load()
+
+        logger.info(f"Loaded {len(documents)} document(s)")
+
+        return documents
+
+
+---
+
+# 3. csv_loader.py
+
+
+from pathlib import Path
+
+from langchain_community.document_loaders import CSVLoader
+from langchain_core.documents import Document
+
+from config import logger
+
+
+class CSVDocumentLoader:
+
+    def load(self, file_path: str) -> list[Document]:
+
+        path = Path(file_path)
+
+        if not path.exists():
+            raise FileNotFoundError(file_path)
+
+        logger.info(f"Loading CSV: {file_path}")
+
+        loader = CSVLoader(file_path=str(path))
+
+        documents = loader.load()
+
+        logger.info(f"Loaded {len(documents)} rows")
+
+        return documents
+
+
+---
+
+# 4. web_loader.py
+
+
+from langchain_community.document_loaders import WebBaseLoader
+from langchain_core.documents import Document
+
+from config import logger
+
+
+class WebsiteLoader:
+
+    def load(self, url: str) -> list[Document]:
+
+        logger.info(f"Loading Website: {url}")
+
+        loader = WebBaseLoader(url)
+
+        documents = loader.load()
+
+        logger.info(f"Loaded {len(documents)} web document(s)")
+
+        return documents
+
+
+> **Note:** `WebBaseLoader` may require installing `beautifulsoup4` and `lxml`.
+
+Add these to `requirements.txt` if you plan to use web loading:
+
+
+beautifulsoup4
+lxml
+
+
+---
+
+# 5. **init**.py
+
+
+from .pdf_loader import PDFLoader
+from .docx_loader import DocxLoader
+from .csv_loader import CSVDocumentLoader
+from .web_loader import WebsiteLoader
+
+
+---
+
+# Usage Examples
+
+### Load a PDF
+
+
+from loaders import PDFLoader
+
+loader = PDFLoader()
+
+documents = loader.load("documents/sample.pdf")
+
+print(documents[0].page_content)
+print(documents[0].metadata)
+
+
+---
+
+### Load a DOCX
+
+
+from loaders import DocxLoader
+
+loader = DocxLoader()
+
+documents = loader.load("documents/manual.docx")
+
+
+---
+
+### Load a CSV
+
+
+from loaders import CSVDocumentLoader
+
+loader = CSVDocumentLoader()
+
+documents = loader.load("documents/employees.csv")
+
+
+---
+
+### Load a Website
+
+
+from loaders import WebsiteLoader
+
+loader = WebsiteLoader()
+
+documents = loader.load("https://example.com")
+
+
+---
+
+# What does a `Document` look like?
+
+Every loader returns the same type:
+
+
+Document(
+    page_content="This is the text extracted from the source...",
+    metadata={
+        "source": "documents/sample.pdf",
+        "page": 0
+    }
+)
+
+
+Because all loaders return `Document` objects, the next stage (chunking) can process them identically, regardless of their original source.
+
+---
+
+# Project Flow So Far
+
+
+PDF
+DOCX
+CSV
+Website
+    │
+    ▼
+Document Loader
+    │
+    ▼
+List[Document]
+    │
+    ▼
+(Next Part)
+Text Splitter
+
+
+---
+
+## Part 4 Preview
+
+In **Part 4**, we'll build the **Chunking Layer** (`chunking/splitter.py`), where we'll:
+
+* Split documents into manageable chunks.
+* Configure chunk size and overlap.
+* Preserve metadata for each chunk.
+* Prepare chunks for embedding into the vector database.
+
+
+
+
+Use **both**, but for different purposes. This is how production RAG applications are typically organized.
+
+## `documents/` (Static Knowledge Base)
+
+Store permanent documents that ship with the application or are managed by administrators.
+
+
+documents/
+├── employee_handbook.pdf
+├── hr_policy.pdf
+├── aws_guide.pdf
+└── company_faq.docx
+
+
+These documents:
+
+* Are part of the knowledge base.
+* Usually don't change frequently.
+* Can be ingested when the application starts or on demand.
+
+---
+
+## `uploads/` (User-Uploaded Files)
+
+Store files uploaded by users through the UI or API.
+
+
+uploads/
+├── 20260806_143000_resume.pdf
+├── 20260806_143500_invoice.pdf
+└── 20260806_144000_notes.docx
+
+
+These files:
+
+* Are temporary or user-specific.
+* Are uploaded through endpoints like `POST /upload`.
+* Can be deleted after ingestion if you don't need to keep them.
+
+---
+
+## Recommended `.env`
+
+ini
+APP_NAME=Enterprise RAG
+
+HOST=0.0.0.0
+PORT=8000
+
+OLLAMA_BASE_URL=http://ollama:11434
+OLLAMA_MODEL=llama3.2
+
+EMBEDDING_MODEL=nomic-embed-text
+
+VECTOR_DB=faiss
+VECTOR_DB_PATH=vector_db/faiss_index
+
+DOCUMENT_DIR=documents
+UPLOAD_DIR=uploads
+
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=ragdb
+POSTGRES_USER=raguser
+POSTGRES_PASSWORD=ragpassword
+
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+
+---
+
+## Update `settings.py`
+
+Add a separate configuration for the documents directory:
+
+
+DOCUMENT_DIR: str
+UPLOAD_DIR: str
+VECTOR_DB_PATH: str
+
+
+---
+
+## Real-Time Workflow
+
+
+documents/
+        │
+        ▼
+Initial ingestion
+        │
+        ▼
+FAISS Index
+        ▲
+        │
+uploads/
+        │
+User uploads a PDF
+        │
+        ▼
+Upload API
+        │
+        ▼
+Chunking
+        │
+        ▼
+Embeddings
+        │
+        ▼
+Update FAISS Index
+
+
+---
+
+### My recommendation
+
+Keep **both**:
+
+* `documents/` → Permanent knowledge base (company manuals, policies, FAQs, technical documentation).
+* `uploads/` → Files uploaded by users through the application.
+
+This separation makes the project cleaner, easier to maintain, and aligns with how production RAG systems are typically designed.
+
+
+
+
+======================================
+
+
+Part 4
+
+
+Excellent! Now we'll build the **Chunking Layer**, one of the most important parts of a RAG application.
+
+# Part 4 – Chunking Layer
+
+## Why do we need chunking?
+
+LLMs cannot efficiently process very large documents in one go.
+
+Example:
+
+
+PDF (100 pages)
+        │
+        ▼
+Text
+        │
+        ▼
+Split into small chunks
+        │
+        ▼
+Embedding
+        │
+        ▼
+FAISS
+
+
+Instead of embedding an entire PDF, we split it into smaller pieces.
+
+Example:
+
+
+Chunk 1 (500 chars)
+Chunk 2 (500 chars)
+Chunk 3 (500 chars)
+...
+
+
+This improves:
+
+* Retrieval accuracy
+* Embedding quality
+* LLM response quality
+* Performance
+
+---
+
+# Folder Structure
+
+
+chunking/
+│
+├── __init__.py
+└── splitter.py
+
+
+---
+
+# splitter.py
+
+
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from config import logger
+
+
+class TextChunker:
+    """
+    Splits LangChain Document objects into smaller chunks.
+    """
+
+    def __init__(
+        self,
+        chunk_size: int = 1000,
+        chunk_overlap: int = 200,
+    ):
+        self.splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            length_function=len,
+            separators=[
+                "\n\n",
+                "\n",
+                ". ",
+                " ",
+                ""
+            ],
+        )
+
+    def split_documents(
+        self,
+        documents: list[Document],
+    ) -> list[Document]:
+
+        logger.info(
+            f"Splitting {len(documents)} document(s)..."
+        )
+
+        chunks = self.splitter.split_documents(documents)
+
+        logger.info(
+            f"Created {len(chunks)} chunks."
+        )
+
+        return chunks
+
+
+---
+
+# **init**.py
+
+
+from .splitter import TextChunker
+
+
+---
+
+# Example
+
+Suppose a PDF contains
+
+
+Artificial Intelligence is changing the world.
+
+Machine Learning is a subset of AI.
+
+Deep Learning is a subset of Machine Learning.
+
+RAG combines retrieval with LLMs.
+
+
+After splitting
+
+
+Chunk 1
+
+Artificial Intelligence is changing the world.
+
+Machine Learning is a subset of AI.
+
+
+
+Chunk 2
+
+Machine Learning is a subset of AI.
+
+Deep Learning is a subset of Machine Learning.
+
+
+
+Chunk 3
+
+Deep Learning is a subset of Machine Learning.
+
+RAG combines retrieval with LLMs.
+
+
+Notice that some text overlaps between chunks.
+
+---
+
+# Usage
+
+
+from loaders import PDFLoader
+from chunking import TextChunker
+
+loader = PDFLoader()
+
+documents = loader.load(
+    "documents/ai.pdf"
+)
+
+chunker = TextChunker()
+
+chunks = chunker.split_documents(
+    documents
+)
+
+print(len(chunks))
+
+
+---
+
+# Inspect a Chunk
+
+
+print(chunks[0].page_content)
+
+
+Output
+
+
+Artificial Intelligence is changing the world.
+
+Machine Learning is a subset of AI.
+
+
+Metadata is preserved:
+
+
+print(chunks[0].metadata)
+
+
+Example:
+
+
+{
+    "source": "documents/ai.pdf",
+    "page": 0
+}
+
+
+---
+
+# Why RecursiveCharacterTextSplitter?
+
+LangChain offers several splitters:
+
+| Splitter                       | Best Use                                |
+| ------------------------------ | --------------------------------------- |
+| RecursiveCharacterTextSplitter | General-purpose documents (recommended) |
+| CharacterTextSplitter          | Simple text splitting                   |
+| TokenTextSplitter              | Token-aware chunking                    |
+| MarkdownHeaderTextSplitter     | Markdown files                          |
+| HTMLHeaderTextSplitter         | HTML documents                          |
+| PythonCodeTextSplitter         | Python source code                      |
+| LatexTextSplitter              | LaTeX documents                         |
+
+For PDFs, DOCX, and CSV files, `RecursiveCharacterTextSplitter` is usually the best starting point.
+
+---
+
+# Recommended Chunk Sizes
+
+| Document Type | Chunk Size | Overlap |
+| ------------- | ---------: | ------: |
+| PDF           |       1000 |     200 |
+| DOCX          |        800 |     150 |
+| CSV           |        500 |     100 |
+| Website       |       1000 |     200 |
+| Source Code   |        600 |     100 |
+
+---
+
+# Project Flow
+
+
+PDF Loader
+      │
+      ▼
+Document
+      │
+      ▼
+TextChunker
+      │
+      ▼
+Chunks
+      │
+      ▼
+Embedding Model
+      │
+      ▼
+FAISS
+
+
+---
+
+# Project Structure
+
+
+rag-enterprise/
+│
+├── loaders/
+│
+├── chunking/
+│   ├── __init__.py
+│   └── splitter.py
+│
+├── embeddings/
+│
+├── vectorstore/
+│
+└── ...
+
+
+---
+
+## Part 5 Preview
+
+In **Part 5**, we'll implement the **Embedding Layer**:
+
+* `embeddings/embedding_model.py`
+* Ollama embedding integration (`nomic-embed-text`)
+* Creating vector embeddings
+* Singleton embedding model for efficiency
+* Error handling and logging
+* Preparing embeddings for storage in FAISS
+
+
+
+
+===========================
+
+
+
+Part 5
+
+
+Excellent. In **Part 5**, we'll build the **Embedding Layer**, which converts text chunks into numerical vectors that can be stored and searched in a vector database.
+
+---
+
+# Project Structure
+
+
+embeddings/
+│
+├── __init__.py
+└── embedding_model.py
+
+
+---
+
+# What are Embeddings?
+
+Suppose you have three chunks:
+
+
+Chunk 1:
+AWS provides cloud services.
+
+Chunk 2:
+Python is a programming language.
+
+Chunk 3:
+Snowflake is a cloud data warehouse.
+
+
+The embedding model converts them into vectors like:
+
+
+Chunk 1
+[0.12, -0.45, 0.77, ...]
+
+Chunk 2
+[0.81, 0.22, -0.19, ...]
+
+Chunk 3
+[-0.34, 0.11, 0.92, ...]
+
+
+These vectors capture semantic meaning. Similar content ends up with similar vectors, enabling similarity search.
+
+---
+
+# embedding_model.py
+
+
+from langchain_ollama import OllamaEmbeddings
+
+from config import logger, settings
+
+
+class EmbeddingModel:
+    """
+    Singleton wrapper around the Ollama embedding model.
+    """
+
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+
+            logger.info(
+                f"Loading embedding model: {settings.EMBEDDING_MODEL}"
+            )
+
+            cls._instance.model = OllamaEmbeddings(
+                model=settings.EMBEDDING_MODEL,
+                base_url=settings.OLLAMA_BASE_URL,
+            )
+
+        return cls._instance
+
+    def get_model(self):
+        return self.model
+
+
+---
+
+# **init**.py
+
+
+from .embedding_model import EmbeddingModel
+
+
+---
+
+# Why Singleton?
+
+Without a singleton:
+
+
+emb1 = EmbeddingModel()
+emb2 = EmbeddingModel()
+emb3 = EmbeddingModel()
+
+
+This could repeatedly initialize the embedding client.
+
+With the singleton:
+
+
+emb1 = EmbeddingModel()
+emb2 = EmbeddingModel()
+
+print(emb1 is emb2)
+
+
+Output:
+
+
+True
+
+
+Only one instance is created and reused throughout the application.
+
+---
+
+# Using the Embedding Model
+
+
+from embeddings import EmbeddingModel
+
+embedding_model = EmbeddingModel().get_model()
+
+
+Generate an embedding for a single query:
+
+
+query_vector = embedding_model.embed_query(
+    "What is AWS?"
+)
+
+print(len(query_vector))
+
+
+Example output:
+
+
+768
+
+
+(The exact vector size depends on the embedding model.)
+
+Generate embeddings for multiple texts:
+
+
+texts = [
+    "AWS is a cloud platform.",
+    "Snowflake stores analytical data.",
+    "Python is widely used for AI."
+]
+
+vectors = embedding_model.embed_documents(texts)
+
+print(len(vectors))
+
+
+Output:
+
+
+3
+
+
+---
+
+# Using with Chunks
+
+
+from loaders import PDFLoader
+from chunking import TextChunker
+from embeddings import EmbeddingModel
+
+loader = PDFLoader()
+
+documents = loader.load(
+    "documents/aws.pdf"
+)
+
+chunker = TextChunker()
+
+chunks = chunker.split_documents(documents)
+
+embedding_model = EmbeddingModel().get_model()
+
+vectors = embedding_model.embed_documents(
+    [chunk.page_content for chunk in chunks]
+)
+
+print(len(vectors))
+
+
+---
+
+# Flow So Far
+
+
+PDF
+ │
+ ▼
+Loader
+ │
+ ▼
+Document
+ │
+ ▼
+Chunker
+ │
+ ▼
+Chunks
+ │
+ ▼
+Embedding Model
+ │
+ ▼
+Vectors
+
+
+---
+
+# Production Best Practices
+
+Instead of hardcoding values:
+
+
+OllamaEmbeddings(
+    model="nomic-embed-text",
+    base_url="http://localhost:11434"
+)
+
+
+Use configuration:
+
+
+OllamaEmbeddings(
+    model=settings.EMBEDDING_MODEL,
+    base_url=settings.OLLAMA_BASE_URL
+)
+
+
+This allows switching models by changing only the `.env` file.
+
+---
+
+# Update `.env`
+
+ini
+EMBEDDING_MODEL=nomic-embed-text
+OLLAMA_BASE_URL=http://ollama:11434
+
+
+If you're running the application **outside Docker** while Ollama runs on your local machine, use:
+
+ini
+OLLAMA_BASE_URL=http://localhost:11434
+
+
+---
+
+# Current Architecture
+
+
+PDF/DOCX/CSV
+       │
+       ▼
+Loaders
+       │
+       ▼
+Documents
+       │
+       ▼
+Chunker
+       │
+       ▼
+Chunks
+       │
+       ▼
+Embedding Model
+       │
+       ▼
+Vectors
+       │
+       ▼
+(Next)
+FAISS Vector Store
+
+
+## Part 6 Preview
+
+In **Part 6**, we'll implement the **Vector Store Layer**:
+
+* `vectorstore/faiss_store.py`
+* Create a FAISS index
+* Save the index to disk
+* Load an existing index
+* Add new document chunks
+* Perform similarity search for retrieval
+* Integrate it with the embedding model built in Part 5
+
+
+
+**Singleton** is a **design pattern** that ensures **only one instance (object)** of a class exists during the application's lifetime, and all parts of the application use that same instance.
+
+---
+
+# Without Singleton
+
+
+class Database:
+    pass
+
+
+db1 = Database()
+db2 = Database()
+db3 = Database()
+
+print(db1 is db2)
+
+
+Output
+
+
+False
+
+
+Memory:
+
+
+Database()
+Database()
+Database()
+
+
+Three separate objects are created.
+
+---
+
+# With Singleton
+
+
+class Database:
+
+    _instance = None
+
+    def __new__(cls):
+
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+
+        return cls._instance
+
+
+Usage
+
+
+db1 = Database()
+db2 = Database()
+db3 = Database()
+
+print(db1 is db2)
+print(db2 is db3)
+
+
+Output
+
+
+True
+True
+
+
+Only **one object** exists.
+
+---
+
+# Visual Representation
+
+Without Singleton
+
+
+db1 ─────► Object A
+
+db2 ─────► Object B
+
+db3 ─────► Object C
+
+
+With Singleton
+
+
+db1 ──┐
+       │
+db2 ──┼────► One Object
+       │
+db3 ──┘
+
+
+---
+
+# How it works
+
+
+class Singleton:
+
+    _instance = None
+
+    def __new__(cls):
+
+        if cls._instance is None:
+
+            cls._instance = super().__new__(cls)
+
+        return cls._instance
+
+
+### First call
+
+
+obj1 = Singleton()
+
+
+* `_instance` is `None`
+* Create a new object
+* Store it in `_instance`
+* Return it
+
+### Second call
+
+
+obj2 = Singleton()
+
+
+* `_instance` already exists
+* Don't create a new object
+* Return the existing one
+
+---
+
+# Why use Singleton in a RAG application?
+
+Creating an embedding model or database client can be relatively expensive. Reusing a single instance avoids repeated initialization.
+
+Without Singleton:
+
+
+embedding1 = OllamaEmbeddings(...)
+embedding2 = OllamaEmbeddings(...)
+embedding3 = OllamaEmbeddings(...)
+
+
+This creates three separate client objects.
+
+With Singleton:
+
+
+embedding = EmbeddingModel()
+
+embedding.get_model()
+embedding.get_model()
+embedding.get_model()
+
+
+Only one client is created and reused.
+
+---
+
+# Example from our project
+
+
+class EmbeddingModel:
+
+    _instance = None
+
+    def __new__(cls):
+
+        if cls._instance is None:
+
+            cls._instance = super().__new__(cls)
+
+            cls._instance.model = OllamaEmbeddings(
+                model=settings.EMBEDDING_MODEL,
+                base_url=settings.OLLAMA_BASE_URL
+            )
+
+        return cls._instance
+
+    def get_model(self):
+        return self.model
+
+
+Usage:
+
+
+emb1 = EmbeddingModel()
+emb2 = EmbeddingModel()
+
+print(emb1 is emb2)
+
+
+Output:
+
+
+True
+
+
+Both variables refer to the same `EmbeddingModel` instance.
+
+---
+
+# When should you use Singleton?
+
+Use it when you need **one shared instance** across the application, for example:
+
+* Logger
+* Database connection pool or client
+* Configuration/settings object
+* Redis client
+* Embedding model client
+* Vector store manager
+
+Avoid using it for objects that represent independent data, such as:
+
+* User
+* Employee
+* Order
+* Product
+
+Each of those should be a separate instance.
+
+---
+
+# Interview Answer (2–3 lines)
+
+**What is the Singleton Design Pattern?**
+
+The Singleton pattern ensures that a class has only one instance throughout the application and provides a single global access point to that instance. It is commonly used for shared resources such as configuration objects, loggers, database clients, and embedding model clients to avoid unnecessary reinitialization and conserve resources.
+
+
+
+===================================
+
+
+
+
+Part 6
+
+
+
+Excellent! Now we'll build the **FAISS Vector Store**, which stores the embeddings and retrieves the most relevant chunks for a user query.
+
+# Part 6 – FAISS Vector Store
+
+## Folder Structure
+
+
+vectorstore/
+│
+├── __init__.py
+├── faiss_store.py
+├── chroma_store.py      # Later
+└── vector_factory.py    # Later
+
+
+---
+
+# What is FAISS?
+
+**FAISS (Facebook AI Similarity Search)** is a vector database/library used to store embeddings and quickly find the most similar vectors.
+
+Workflow:
+
+
+PDF
+ │
+ ▼
+Loader
+ │
+ ▼
+Chunker
+ │
+ ▼
+Embeddings
+ │
+ ▼
+FAISS Index
+ │
+ ▼
+Similarity Search
+ │
+ ▼
+Relevant Chunks
+
+
+---
+
+# faiss_store.py
+
+
+from pathlib import Path
+
+from langchain_community.vectorstores import FAISS
+from langchain_core.documents import Document
+
+from config import logger, settings
+from embeddings import EmbeddingModel
+
+
+class FAISSStore:
+    """
+    Wrapper around LangChain FAISS vector store.
+    """
+
+    def __init__(self):
+
+        self.embedding = EmbeddingModel().get_model()
+
+        self.index_path = Path(settings.VECTOR_DB_PATH)
+
+        self.vector_store = None
+
+    def create(self, documents: list[Document]):
+
+        logger.info("Creating FAISS index...")
+
+        self.vector_store = FAISS.from_documents(
+            documents=documents,
+            embedding=self.embedding
+        )
+
+        self.save()
+
+        logger.info("FAISS index created successfully.")
+
+    def save(self):
+
+        if self.vector_store is None:
+            raise ValueError("Vector store not initialized.")
+
+        self.index_path.mkdir(parents=True, exist_ok=True)
+
+        self.vector_store.save_local(
+            folder_path=str(self.index_path)
+        )
+
+        logger.info(f"Saved index to {self.index_path}")
+
+    def load(self):
+
+        if not self.index_path.exists():
+            raise FileNotFoundError(
+                f"Index not found: {self.index_path}"
+            )
+
+        self.vector_store = FAISS.load_local(
+            folder_path=str(self.index_path),
+            embeddings=self.embedding,
+            allow_dangerous_deserialization=True
+        )
+
+        logger.info("FAISS index loaded.")
+
+    def add_documents(self, documents: list[Document]):
+
+        if self.vector_store is None:
+            self.load()
+
+        self.vector_store.add_documents(documents)
+
+        self.save()
+
+        logger.info(f"Added {len(documents)} documents.")
+
+    def similarity_search(
+        self,
+        query: str,
+        k: int = 4
+    ) -> list[Document]:
+
+        if self.vector_store is None:
+            self.load()
+
+        logger.info(f"Searching: {query}")
+
+        return self.vector_store.similarity_search(
+            query=query,
+            k=k
+        )
+
+
+---
+
+# **init**.py
+
+
+from .faiss_store import FAISSStore
+
+
+---
+
+# Build the Vector Database
+
+
+from loaders import PDFLoader
+from chunking import TextChunker
+from vectorstore import FAISSStore
+
+loader = PDFLoader()
+
+documents = loader.load("documents/aws.pdf")
+
+chunker = TextChunker()
+
+chunks = chunker.split_documents(documents)
+
+store = FAISSStore()
+
+store.create(chunks)
+
+
+Console:
+
+
+Loading PDF...
+Loaded 42 pages
+
+Splitting...
+Created 188 chunks
+
+Creating FAISS index...
+
+Saved index
+
+Done
+
+
+---
+
+# Search the Vector Database
+
+
+from vectorstore import FAISSStore
+
+store = FAISSStore()
+
+results = store.similarity_search(
+    "What is Amazon S3?",
+    k=3
+)
+
+for doc in results:
+    print(doc.page_content)
+
+
+Output:
+
+
+Amazon S3 is an object storage service...
+
+S3 provides durability of 99.999999999%...
+
+S3 supports lifecycle policies...
+
+
+---
+
+# Add More Documents
+
+
+loader = PDFLoader()
+
+documents = loader.load(
+    "documents/snowflake.pdf"
+)
+
+chunker = TextChunker()
+
+chunks = chunker.split_documents(documents)
+
+store = FAISSStore()
+
+store.add_documents(chunks)
+
+
+The new chunks are embedded and appended to the existing FAISS index.
+
+---
+
+# What gets stored?
+
+After `save()`, your project will contain something like:
+
+
+vector_db/
+└── faiss_index/
+    ├── index.faiss
+    └── index.pkl
+
+
+* `index.faiss` → vector index
+* `index.pkl` → metadata and document mapping
+
+These files are loaded when the application starts, so embeddings don't need to be regenerated every time.
+
+---
+
+# Current Project Flow
+
+
+PDF
+ │
+ ▼
+Loader
+ │
+ ▼
+Chunker
+ │
+ ▼
+Embedding Model
+ │
+ ▼
+FAISS Store
+ │
+ ▼
+Similarity Search
+
+
+---
+
+# Project Structure
+
+
+rag-enterprise/
+│
+├── loaders/
+├── chunking/
+├── embeddings/
+├── vectorstore/
+│   ├── __init__.py
+│   └── faiss_store.py
+│
+├── vector_db/
+│   └── faiss_index/
+│
+└── ...
+
+
+---
+
+# Small Improvement for Production
+
+Instead of hardcoding `k=4`, make it configurable.
+
+### `.env`
+
+ini
+TOP_K=4
+
+
+### `settings.py`
+
+
+TOP_K: int
+
+
+### Use it
+
+
+results = self.vector_store.similarity_search(
+    query=query,
+    k=settings.TOP_K
+)
+
+
+This lets you tune retrieval without changing code.
+
+---
+
+## Part 7 Preview
+
+In **Part 7**, we'll build the **LLM Layer**:
+
+* `models/ollama_model.py`
+* Singleton `ChatOllama`
+* Prompt templates
+* Generate answers from retrieved chunks
+* Support for streaming responses
+* Configuration-driven model selection
+
+
+
+
+=======================================================
+
+
+Part 7
+
+Excellent! **Part 7** builds the **LLM Layer**, which takes the retrieved chunks from FAISS and sends them to the LLM (Ollama) to generate the final answer.
+
+---
+
+# Folder Structure
+
+
+models/
+│
+├── __init__.py
+└── ollama_model.py
+
+prompts/
+│
+├── __init__.py
+├── system_prompt.py
+└── rag_prompt.py
+
+
+---
+
+# Workflow
+
+
+User Question
+      │
+      ▼
+FAISS Search
+      │
+      ▼
+Top 4 Chunks
+      │
+      ▼
+Prompt Template
+      │
+      ▼
+ChatOllama
+      │
+      ▼
+Answer
+
+
+---
+
+# 1. prompts/system_prompt.py
+
+
+SYSTEM_PROMPT = """
+You are an AI assistant for question answering.
+
+Rules:
+
+1. Answer ONLY from the provided context.
+
+2. If the answer is not available in the context, say:
+
+"I don't have enough information in the provided documents."
+
+3. Do not make up answers.
+
+4. Keep responses clear and professional.
+
+5. If possible, answer using bullet points.
+"""
+
+
+---
+
+# 2. prompts/rag_prompt.py
+
+
+from langchain_core.prompts import ChatPromptTemplate
+
+from .system_prompt import SYSTEM_PROMPT
+
+
+RAG_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            SYSTEM_PROMPT,
+        ),
+        (
+            "human",
+            """
+Context:
+
+{context}
+
+Question:
+
+{question}
+"""
+        )
+    ]
+)
+
+
+---
+
+# 3. models/ollama_model.py
+
+
+from langchain_ollama import ChatOllama
+
+from config import logger, settings
+
+
+class OllamaModel:
+
+    _instance = None
+
+    def __new__(cls):
+
+        if cls._instance is None:
+
+            cls._instance = super().__new__(cls)
+
+            logger.info(
+                f"Loading model: {settings.OLLAMA_MODEL}"
+            )
+
+            cls._instance.model = ChatOllama(
+                model=settings.OLLAMA_MODEL,
+                base_url=settings.OLLAMA_BASE_URL,
+                temperature=0,
+            )
+
+        return cls._instance
+
+    def get_model(self):
+
+        return self.model
+
+
+---
+
+# 4. models/**init**.py
+
+
+from .ollama_model import OllamaModel
+
+
+---
+
+# 5. prompts/**init**.py
+
+
+from .rag_prompt import RAG_PROMPT
+
+
+---
+
+# Using the Model
+
+
+from models import OllamaModel
+
+llm = OllamaModel().get_model()
+
+response = llm.invoke(
+    "What is AWS?"
+)
+
+print(response.content)
+
+
+---
+
+# Using the Prompt
+
+
+from prompts import RAG_PROMPT
+
+prompt = RAG_PROMPT.invoke(
+    {
+        "context": "Amazon S3 is an object storage service.",
+        "question": "What is Amazon S3?"
+    }
+)
+
+print(prompt)
+
+
+---
+
+# Complete Example
+
+
+from models import OllamaModel
+from prompts import RAG_PROMPT
+
+llm = OllamaModel().get_model()
+
+context = """
+Amazon S3 is an object storage service.
+"""
+
+question = "What is Amazon S3?"
+
+prompt = RAG_PROMPT.invoke(
+    {
+        "context": context,
+        "question": question
+    }
+)
+
+response = llm.invoke(prompt)
+
+print(response.content)
+
+
+Output
+
+
+Amazon S3 is an object storage service provided by AWS for storing and retrieving data at any scale.
+
+
+---
+
+# Streaming Response (Optional)
+
+Instead of waiting for the full answer:
+
+
+response = llm.stream(prompt)
+
+for chunk in response:
+    print(chunk.content, end="", flush=True)
+
+
+This prints tokens as they are generated, which is useful for chat interfaces.
+
+---
+
+# Current Architecture
+
+
+PDF
+ │
+ ▼
+Loader
+ │
+ ▼
+Chunker
+ │
+ ▼
+Embedding
+ │
+ ▼
+FAISS
+ │
+ ▼
+Top Chunks
+ │
+ ▼
+Prompt
+ │
+ ▼
+ChatOllama
+ │
+ ▼
+Answer
+
+
+---
+
+# Project Structure
+
+
+rag-enterprise/
+│
+├── models/
+│   ├── __init__.py
+│   └── ollama_model.py
+│
+├── prompts/
+│   ├── __init__.py
+│   ├── system_prompt.py
+│   └── rag_prompt.py
+│
+├── vectorstore/
+├── embeddings/
+├── chunking/
+├── loaders/
+└── ...
+
+
+---
+
+# Improvement for Production
+
+Instead of hardcoding the temperature, add it to your configuration.
+
+### `.env`
+
+ini
+OLLAMA_TEMPERATURE=0
+
+
+### `settings.py`
+
+
+OLLAMA_TEMPERATURE: float
+
+
+### `ollama_model.py`
+
+
+ChatOllama(
+    model=settings.OLLAMA_MODEL,
+    base_url=settings.OLLAMA_BASE_URL,
+    temperature=settings.OLLAMA_TEMPERATURE,
+)
+
+
+This lets you adjust the model's creativity without modifying the code.
+
+---
+
+## Part 8 Preview
+
+In **Part 8**, we'll build the **RAG Service**, which ties everything together:
+
+* Load the FAISS index
+* Retrieve the most relevant chunks
+* Build the prompt
+* Invoke the LLM
+* Return the final answer
+* Add robust error handling and logging
+
+At that point, you'll have the complete RAG pipeline working end-to-end.
+
+
+
+
+
+===========================================
+
+
+
+Part 8
+
+
+Excellent. **Part 8** is the heart of the application. It connects all previous modules into a complete **RAG pipeline**.
+
+Up to now we've built:
+
+
+Loader
+   ↓
+Chunker
+   ↓
+Embedding
+   ↓
+FAISS
+   ↓
+LLM
+
+
+Now we'll create the **RAG Service** that orchestrates all these components.
+
+---
+
+# Folder Structure
+
+
+services/
+│
+├── __init__.py
+├── rag_service.py
+├── retrieval_service.py
+├── llm_service.py
+├── embedding_service.py
+└── ingestion_service.py
+
+
+> In this part, we'll implement **rag_service.py**. The remaining service files will be added in later parts.
+
+---
+
+# Architecture
+
+
+User Question
+      │
+      ▼
+RAG Service
+      │
+      ├─────────────┐
+      ▼             ▼
+ FAISS Search   Prompt Builder
+      │             │
+      └──────┬──────┘
+             ▼
+        ChatOllama
+             │
+             ▼
+          Response
+
+
+---
+
+# services/rag_service.py
+
+
+from langchain_core.documents import Document
+
+from config import logger
+from models import OllamaModel
+from prompts import RAG_PROMPT
+from vectorstore import FAISSStore
+
+
+class RAGService:
+
+    def __init__(self):
+
+        self.vector_store = FAISSStore()
+
+        self.llm = OllamaModel().get_model()
+
+    def ask(
+        self,
+        question: str,
+        k: int = 4
+    ) -> str:
+
+        logger.info(f"Question: {question}")
+
+        documents = self.vector_store.similarity_search(
+            query=question,
+            k=k
+        )
+
+        context = self._build_context(documents)
+
+        prompt = RAG_PROMPT.invoke(
+            {
+                "context": context,
+                "question": question
+            }
+        )
+
+        response = self.llm.invoke(prompt)
+
+        logger.info("Answer generated.")
+
+        return response.content
+
+    @staticmethod
+    def _build_context(
+        documents: list[Document]
+    ) -> str:
+
+        return "\n\n".join(
+            document.page_content
+            for document in documents
+        )
+
+
+---
+
+# services/**init**.py
+
+
+from .rag_service import RAGService
+
+
+---
+
+# Example
+
+
+from services import RAGService
+
+rag = RAGService()
+
+answer = rag.ask(
+    "What is Amazon S3?"
+)
+
+print(answer)
+
+
+---
+
+# Internal Flow
+
+
+Question
+   │
+   ▼
+"What is S3?"
+   │
+   ▼
+Similarity Search
+   │
+   ▼
+Top 4 Documents
+   │
+   ▼
+Merge Context
+   │
+   ▼
+Prompt Template
+   │
+   ▼
+ChatOllama
+   │
+   ▼
+Final Answer
+
+
+---
+
+# Context Example
+
+Suppose FAISS returns
+
+
+Chunk 1
+
+Amazon S3 is an object storage service.
+
+Chunk 2
+
+S3 provides 99.999999999% durability.
+
+Chunk 3
+
+S3 supports lifecycle policies.
+
+
+The context becomes
+
+
+Amazon S3 is an object storage service.
+
+S3 provides 99.999999999% durability.
+
+S3 supports lifecycle policies.
+
+
+This context is inserted into the prompt before calling the LLM.
+
+---
+
+# Better Error Handling (Recommended)
+
+Instead of assuming everything succeeds:
+
+
+def ask(self, question: str, k: int = 4) -> str:
+
+    try:
+
+        documents = self.vector_store.similarity_search(
+            question,
+            k
+        )
+
+        if not documents:
+            return "No relevant documents found."
+
+        context = self._build_context(documents)
+
+        prompt = RAG_PROMPT.invoke(
+            {
+                "context": context,
+                "question": question
+            }
+        )
+
+        response = self.llm.invoke(prompt)
+
+        return response.content
+
+    except Exception as error:
+
+        logger.exception(error)
+
+        return "An internal error occurred."
+
+
+This provides a better user experience and logs the full error for debugging.
+
+---
+
+# Current Project Architecture
+
+
+PDF
+ │
+ ▼
+Loader
+ │
+ ▼
+Chunker
+ │
+ ▼
+Embedding
+ │
+ ▼
+FAISS
+ │
+ ▼
+RAG Service
+ │
+ ▼
+Prompt
+ │
+ ▼
+ChatOllama
+ │
+ ▼
+Answer
+
+
+---
+
+# Project Structure
+
+
+rag-enterprise/
+│
+├── services/
+│   ├── __init__.py
+│   └── rag_service.py
+│
+├── prompts/
+├── models/
+├── vectorstore/
+├── embeddings/
+├── chunking/
+├── loaders/
+└── ...
+
+
+---
+
+# A Production Improvement
+
+Instead of creating the context inside `RAGService`, move retrieval into a dedicated `RetrievalService`:
+
+
+User Question
+      │
+      ▼
+RAG Service
+      │
+      ▼
+Retrieval Service
+      │
+      ▼
+FAISS
+      │
+      ▼
+Relevant Documents
+      │
+      ▼
+LLM Service
+      │
+      ▼
+Answer
+
+
+This separation makes the code easier to test, maintain, and extend.
+
+---
+
+## Part 9 Preview
+
+In **Part 9**, we'll build the **Document Ingestion Service**, which will:
+
+* Accept uploaded files
+* Detect the file type (PDF, DOCX, CSV)
+* Select the appropriate loader
+* Chunk the content
+* Generate embeddings
+* Store them in FAISS
+* Support incremental indexing without rebuilding the entire vector database
+
+This will complete the ingestion side of the RAG application.
+
+
+
+
+
+=======================================
+
+
+
+Part 9
+
+
+Excellent. **Part 9** builds the **Document Ingestion Service**, which is responsible for taking a file, processing it, and updating the vector database.
+
+In a production application, the ingestion pipeline should be separate from the question-answering pipeline.
+
+---
+
+# Architecture
+
+
+                Upload File
+                     │
+                     ▼
+            Ingestion Service
+                     │
+      ┌──────────────┼──────────────┐
+      ▼              ▼              ▼
+   PDF Loader    DOCX Loader    CSV Loader
+      │              │              │
+      └──────────────┼──────────────┘
+                     ▼
+               Text Chunker
+                     ▼
+              Embedding Model
+                     ▼
+                 FAISS Store
+                     ▼
+             Save Updated Index
+
+
+---
+
+# Folder Structure
+
+
+services/
+│
+├── ingestion_service.py
+├── rag_service.py
+├── retrieval_service.py
+├── llm_service.py
+└── embedding_service.py
+
+
+---
+
+# services/ingestion_service.py
+
+
+from pathlib import Path
+
+from config import logger, settings
+from chunking import TextChunker
+from loaders import (
+    PDFLoader,
+    DocxLoader,
+    CSVDocumentLoader,
+)
+from vectorstore import FAISSStore
+
+
+class IngestionService:
+
+    def __init__(self):
+
+        self.chunker = TextChunker()
+
+        self.vector_store = FAISSStore()
+
+    def ingest(self, file_path: str):
+
+        path = Path(file_path)
+
+        if not path.exists():
+            raise FileNotFoundError(file_path)
+
+        logger.info(f"Ingesting {path.name}")
+
+        documents = self._load_document(path)
+
+        chunks = self.chunker.split_documents(documents)
+
+        if self.vector_store.index_path.exists():
+
+            self.vector_store.add_documents(chunks)
+
+        else:
+
+            self.vector_store.create(chunks)
+
+        logger.info("Ingestion completed.")
+
+    def _load_document(self, path: Path):
+
+        suffix = path.suffix.lower()
+
+        if suffix == ".pdf":
+            return PDFLoader().load(str(path))
+
+        elif suffix == ".docx":
+            return DocxLoader().load(str(path))
+
+        elif suffix == ".csv":
+            return CSVDocumentLoader().load(str(path))
+
+        else:
+            raise ValueError(
+                f"Unsupported file type: {suffix}"
+            )
+
+
+---
+
+# services/**init**.py
+
+Update it:
+
+
+from .rag_service import RAGService
+from .ingestion_service import IngestionService
+
+
+---
+
+# Example
+
+
+from services import IngestionService
+
+service = IngestionService()
+
+service.ingest(
+    "documents/aws.pdf"
+)
+
+
+Output
+
+
+Loading PDF...
+
+Loaded 24 pages
+
+Created 106 chunks
+
+Embedding...
+
+Saving FAISS...
+
+Done
+
+
+---
+
+# Add Another File
+
+
+service.ingest(
+    "documents/snowflake.pdf"
+)
+
+
+The FAISS index is updated instead of recreated.
+
+---
+
+# What Happens Internally?
+
+
+aws.pdf
+    │
+    ▼
+PDF Loader
+    │
+    ▼
+24 Pages
+    │
+    ▼
+Chunker
+    │
+    ▼
+106 Chunks
+    │
+    ▼
+Embeddings
+    │
+    ▼
+FAISS
+
+
+---
+
+# Loader Selection
+
+
+if suffix == ".pdf":
+
+
+↓
+
+
+PDFLoader()
+
+
+---
+
+
+if suffix == ".docx":
+
+
+↓
+
+
+DocxLoader()
+
+
+---
+
+
+if suffix == ".csv":
+
+
+↓
+
+
+CSVDocumentLoader()
+
+
+This makes the service extensible. Adding support for `.txt` or `.xlsx` later only requires adding another loader and one additional condition.
+
+---
+
+# Production Improvement: Loader Registry
+
+Instead of multiple `if`/`elif` statements, use a registry.
+
+
+LOADERS = {
+    ".pdf": PDFLoader,
+    ".docx": DocxLoader,
+    ".csv": CSVDocumentLoader,
+}
+
+
+Then:
+
+
+loader = LOADERS[suffix]()
+documents = loader.load(str(path))
+
+
+This follows the **Open/Closed Principle**—you can support new file types without modifying existing logic.
+
+---
+
+# Another Production Improvement: Save Uploads
+
+When a user uploads a file, save it to the configured upload directory before ingestion.
+
+
+destination = Path(settings.UPLOAD_DIR) / path.name
+
+
+Example:
+
+
+uploads/
+│
+├── aws.pdf
+├── snowflake.pdf
+└── employee.csv
+
+
+Then ingest from the saved location.
+
+---
+
+# Full Workflow
+
+
+User Upload
+      │
+      ▼
+uploads/
+      │
+      ▼
+Ingestion Service
+      │
+      ▼
+Loader
+      │
+      ▼
+Chunker
+      │
+      ▼
+Embedding
+      │
+      ▼
+FAISS
+      │
+      ▼
+Saved Index
+
+
+---
+
+# Current Architecture
+
+
+          Upload
+             │
+             ▼
+     Ingestion Service
+             │
+             ▼
+         Document Loader
+             │
+             ▼
+         Text Chunker
+             │
+             ▼
+      Embedding Model
+             │
+             ▼
+        FAISS Vector DB
+             │
+      ┌──────┴──────┐
+      ▼             ▼
+ Save Index     Similarity Search
+                      │
+                      ▼
+                RAG Service
+                      │
+                      ▼
+                 ChatOllama
+                      │
+                      ▼
+                   Response
+
+
+---
+
+# Project Structure
+
+
+rag-enterprise/
+│
+├── services/
+│   ├── __init__.py
+│   ├── rag_service.py
+│   ├── ingestion_service.py
+│   ├── retrieval_service.py
+│   ├── embedding_service.py
+│   └── llm_service.py
+│
+├── loaders/
+├── chunking/
+├── embeddings/
+├── vectorstore/
+├── models/
+├── prompts/
+└── ...
+
+
+## Part 10 Preview
+
+In **Part 10**, we'll build the **FastAPI REST API**, including:
+
+* `app.py`
+* `api/routes.py`
+* `request_model.py`
+* `response_model.py`
+* Endpoints:
+
+  * `POST /upload`
+  * `POST /ask`
+  * `GET /health`
+  * `GET /docs`
+* File upload handling
+* Request validation with Pydantic
+* Proper HTTP status codes and exception handling
+
+At the end of Part 10, you'll have a working backend that clients such as Streamlit or React can call.
+
+
+
+==========================================
+
+
+Part 10
+
+
+
+Excellent! In **Part 10**, we'll build the **FastAPI Backend API** for the RAG application.
+
+This layer exposes REST APIs for:
+
+* Uploading documents
+* Asking questions
+* Health checks
+
+---
+
+# Final Architecture
+
+
+                Client
+         (Streamlit / React)
+
+                  │
+                  ▼
+
+             FastAPI API
+
+        ┌────────┴────────┐
+        ▼                 ▼
+
+ Upload Endpoint      Ask Endpoint
+
+        ▼                 ▼
+
+ Ingestion Service    RAG Service
+
+        ▼                 ▼
+
+      FAISS         ChatOllama
+
+        ▼                 ▼
+
+      Response      AI Response
+
+
+---
+
+# Folder Structure
+
+
+api/
+│
+├── __init__.py
+├── routes.py
+├── request_model.py
+└── response_model.py
+
+app.py
+
+
+---
+
+# api/request_model.py
+
+
+from pydantic import BaseModel, Field
+
+
+class QuestionRequest(BaseModel):
+
+    question: str = Field(
+        min_length=3,
+        max_length=2000
+    )
+
+
+---
+
+# api/response_model.py
+
+
+from pydantic import BaseModel
+
+
+class QuestionResponse(BaseModel):
+
+    answer: str
+
+
+class UploadResponse(BaseModel):
+
+    message: str
+
+
+---
+
+# api/routes.py
+
+
+from pathlib import Path
+import shutil
+
+from fastapi import (
+    APIRouter,
+    File,
+    UploadFile,
+    HTTPException,
+)
+
+from config import settings, logger
+from services import (
+    RAGService,
+    IngestionService,
+)
+from .request_model import QuestionRequest
+from .response_model import (
+    QuestionResponse,
+    UploadResponse,
+)
+
+router = APIRouter()
+
+rag_service = RAGService()
+
+ingestion_service = IngestionService()
+
+
+@router.get("/health")
+def health():
+
+    return {
+        "status": "UP"
+    }
+
+
+@router.post(
+    "/ask",
+    response_model=QuestionResponse
+)
+def ask(request: QuestionRequest):
+
+    try:
+
+        answer = rag_service.ask(
+            request.question
+        )
+
+        return QuestionResponse(
+            answer=answer
+        )
+
+    except Exception as error:
+
+        logger.exception(error)
+
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error"
+        )
+
+
+@router.post(
+    "/upload",
+    response_model=UploadResponse
+)
+async def upload(
+    file: UploadFile = File(...)
+):
+
+    upload_dir = Path(settings.UPLOAD_DIR)
+
+    upload_dir.mkdir(
+        exist_ok=True
+    )
+
+    file_path = upload_dir / file.filename
+
+    with open(file_path, "wb") as buffer:
+
+        shutil.copyfileobj(
+            file.file,
+            buffer
+        )
+
+    ingestion_service.ingest(
+        str(file_path)
+    )
+
+    return UploadResponse(
+        message="Upload successful"
+    )
+
+
+---
+
+# api/**init**.py
+
+
+from .routes import router
+
+
+---
+
+# app.py
+
+
+from fastapi import FastAPI
+
+from api import router
+
+from config import settings
+
+app = FastAPI(
+
+    title=settings.APP_NAME,
+
+    version="1.0.0"
+)
+
+app.include_router(router)
+
+
+---
+
+# Run
+
+bash
+uvicorn app:app --reload
+
+
+---
+
+# Open Swagger
+
+
+http://localhost:8000/docs
+
+
+You'll see:
+
+
+POST /upload
+
+POST /ask
+
+GET /health
+
+
+---
+
+# Health API
+
+
+GET /health
+
+
+Response
+
+
+{
+    "status":"UP"
+}
+
+
+---
+
+# Upload API
+
+
+POST /upload
+
+
+Choose
+
+
+aws.pdf
+
+
+Response
+
+
+{
+    "message":"Upload successful"
+}
+
+
+---
+
+# Ask API
+
+
+POST /ask
+
+
+Body
+
+
+{
+    "question":"What is Amazon S3?"
+}
+
+
+Response
+
+
+{
+    "answer":"Amazon S3 is an object storage service..."
+}
+
+
+---
+
+# Folder Structure
+
+
+rag-enterprise/
+
+api/
+
+    request_model.py
+
+    response_model.py
+
+    routes.py
+
+app.py
+
+
+---
+
+# Production Improvements
+
+Instead of creating services globally:
+
+
+rag_service = RAGService()
+
+
+A larger application often uses **dependency injection**, making services easier to test and replace.
+
+For uploads, validate the file type before saving:
+
+
+ALLOWED_EXTENSIONS = {
+    ".pdf",
+    ".docx",
+    ".csv",
+}
+
+
+Reject unsupported files:
+
+
+suffix = Path(file.filename).suffix.lower()
+
+if suffix not in ALLOWED_EXTENSIONS:
+    raise HTTPException(
+        status_code=400,
+        detail="Unsupported file type"
+    )
+
+
+You can also generate unique filenames to avoid collisions:
+
+
+from uuid import uuid4
+
+unique_name = (
+    f"{uuid4()}"
+    f"{Path(file.filename).suffix}"
+)
+
+
+---
+
+# Current Application Flow
+
+
+User
+ │
+ ▼
+FastAPI
+ │
+ ├───────────────┐
+ ▼               ▼
+
+Upload         Ask
+
+ ▼               ▼
+
+Ingestion     RAG
+
+ ▼               ▼
+
+FAISS        Prompt
+
+                ▼
+
+          ChatOllama
+
+                ▼
+
+            Response
+
+
+## Part 11 Preview
+
+In **Part 11**, we'll build the **Streamlit Frontend**, including:
+
+* Chat interface
+* File upload UI
+* Chat history
+* Calling the FastAPI endpoints
+* Streaming answers
+* Loading indicators
+* Better user experience with session state
+
+At that point, you'll have a complete end-to-end RAG application with a backend and a user interface.
+
+
+
+================================================
+
+
+Part 11
+
+
+Excellent! In **Part 11**, we'll build the **Streamlit Frontend** that communicates with the FastAPI backend.
+
+This UI will allow users to:
+
+* Upload PDF, DOCX, and CSV files
+* Ask questions about uploaded documents
+* View chat history
+* Display answers from the RAG backend
+
+> **Note:** In a production system, the Streamlit app should call the FastAPI endpoints over HTTP. It should **not** import `RAGService` or `IngestionService` directly. This keeps the UI and backend loosely coupled.
+
+---
+
+# Folder Structure
+
+
+rag-enterprise/
+│
+├── streamlit_app.py
+├── app.py
+├── api/
+├── services/
+├── ...
+
+
+---
+
+# Update `.env`
+
+Add the backend URL so the frontend knows where to send requests.
+
+ini
+FASTAPI_URL=http://localhost:8000
+
+
+If both services run in Docker Compose, you can use:
+
+ini
+FASTAPI_URL=http://rag:8000
+
+
+---
+
+# Update `config/settings.py`
+
+Add:
+
+
+FASTAPI_URL: str
+
+
+---
+
+# streamlit_app.py
+
+
+import requests
+import streamlit as st
+
+from config import settings
+
+st.set_page_config(
+    page_title="Enterprise RAG",
+    page_icon="🤖",
+    layout="wide",
+)
+
+st.title("📚 Enterprise RAG Chat")
+
+# ------------------------
+# Chat History
+# ------------------------
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# ------------------------
+# Sidebar
+# ------------------------
+
+st.sidebar.title("Upload Documents")
+
+uploaded_file = st.sidebar.file_uploader(
+    "Choose a file",
+    type=["pdf", "docx", "csv"]
+)
+
+if uploaded_file:
+
+    files = {
+        "file": (
+            uploaded_file.name,
+            uploaded_file,
+            uploaded_file.type
+        )
+    }
+
+    with st.spinner("Uploading..."):
+
+        response = requests.post(
+            f"{settings.FASTAPI_URL}/upload",
+            files=files,
+            timeout=300,
+        )
+
+    if response.ok:
+        st.sidebar.success("Upload successful")
+    else:
+        st.sidebar.error(response.text)
+
+# ------------------------
+# Display Chat
+# ------------------------
+
+for message in st.session_state.messages:
+
+    with st.chat_message(message["role"]):
+
+        st.markdown(message["content"])
+
+# ------------------------
+# Chat Input
+# ------------------------
+
+question = st.chat_input(
+    "Ask a question..."
+)
+
+if question:
+
+    st.session_state.messages.append(
+        {
+            "role": "user",
+            "content": question
+        }
+    )
+
+    with st.chat_message("user"):
+        st.markdown(question)
+
+    with st.spinner("Thinking..."):
+
+        response = requests.post(
+            f"{settings.FASTAPI_URL}/ask",
+            json={
+                "question": question
+            },
+            timeout=300,
+        )
+
+    if response.ok:
+
+        answer = response.json()["answer"]
+
+    else:
+
+        answer = "Error communicating with backend."
+
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": answer
+        }
+    )
+
+    with st.chat_message("assistant"):
+        st.markdown(answer)
+
+
+---
+
+# Start FastAPI
+
+bash
+uvicorn app:app --reload
+
+
+---
+
+# Start Streamlit
+
+bash
+streamlit run streamlit_app.py
+
+
+---
+
+# Browser
+
+
+http://localhost:8501
+
+
+---
+
+# User Flow
+
+
+Upload PDF
+      │
+      ▼
+POST /upload
+      │
+      ▼
+FAISS Updated
+      │
+      ▼
+Ask Question
+      │
+      ▼
+POST /ask
+      │
+      ▼
+LLM Response
+      │
+      ▼
+Chat Window
+
+
+---
+
+# Current Architecture
+
+
+           Streamlit
+
+                │
+
+      HTTP REST API
+
+                │
+
+            FastAPI
+
+      ┌─────────┴─────────┐
+
+      ▼                   ▼
+
+Upload Endpoint      Ask Endpoint
+
+      ▼                   ▼
+
+Ingestion          RAG Service
+
+      ▼                   ▼
+
+FAISS            ChatOllama
+
+      ▼                   ▼
+
+        AI Answer Returned
+
+
+---
+
+# Production Improvements
+
+Instead of hardcoding API calls:
+
+
+requests.post(
+    f"{settings.FASTAPI_URL}/ask"
+)
+
+
+Create a dedicated client.
+
+**client/api_client.py**
+
+
+import requests
+
+from config import settings
+
+
+class APIClient:
+
+    def ask(self, question: str):
+
+        return requests.post(
+            f"{settings.FASTAPI_URL}/ask",
+            json={
+                "question": question
+            },
+            timeout=300,
+        )
+
+    def upload(self, files):
+
+        return requests.post(
+            f"{settings.FASTAPI_URL}/upload",
+            files=files,
+            timeout=300,
+        )
+
+
+Then use:
+
+
+client = APIClient()
+
+response = client.ask(question)
+
+
+This centralizes API communication and simplifies future changes such as authentication, retries, or custom headers.
+
+---
+
+# Current Project Structure
+
+
+rag-enterprise/
+
+streamlit_app.py
+
+app.py
+
+api/
+
+services/
+
+vectorstore/
+
+embeddings/
+
+chunking/
+
+loaders/
+
+models/
+
+prompts/
+
+config/
+
+uploads/
+
+documents/
+
+vector_db/
+
+
+---
+
+## What's Next?
+
+At this point, the application is functionally complete:
+
+* ✅ Document upload
+* ✅ Document ingestion
+* ✅ Chunking
+* ✅ Embeddings
+* ✅ FAISS vector storage
+* ✅ Retrieval
+* ✅ Prompt creation
+* ✅ Ollama integration
+* ✅ FastAPI backend
+* ✅ Streamlit frontend
+
+The remaining modules focus on **production readiness**. The next logical step is **Part 12: PostgreSQL Chat History**, where we'll persist conversations instead of storing them only in Streamlit session state. This enables multi-session history, analytics, and user-specific conversations.
+
+
+
+
+
+======================================================
+
+
+
+Deployment:
+
+
+Perfect. After building the application, the next step is **Dockerizing** it. In a real company, you typically don't run:
+
+* `uvicorn app:app --reload`
+* `streamlit run streamlit_app.py`
+* `ollama serve`
+
+manually. Instead, everything runs as containers.
+
+---
+
+# Final Docker Architecture
+
+
+                    User
+                      │
+                      ▼
+            http://localhost:8501
+                      │
+                      ▼
+              Streamlit Container
+                      │
+          HTTP (Docker Network)
+                      │
+                      ▼
+             FastAPI Container
+                      │
+        ┌─────────────┴─────────────┐
+        ▼                           ▼
+   Ollama Container          PostgreSQL Container
+        │
+        ▼
+   llama3.2
+   nomic-embed-text
+
+        ▲
+        │
+   Redis Container
+
+
+---
+
+# Project Structure
+
+
+rag-enterprise/
+│
+├── api/
+├── services/
+├── loaders/
+├── chunking/
+├── embeddings/
+├── vectorstore/
+├── models/
+├── prompts/
+├── config/
+├── uploads/
+├── vector_db/
+│
+├── app.py
+├── streamlit_app.py
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+├── .dockerignore
+└── .env
+
+
+---
+
+# Step 1: requirements.txt
+
+
+fastapi
+uvicorn
+streamlit
+
+langchain
+langchain-core
+langchain-community
+langchain-text-splitters
+langchain-ollama
+
+ollama
+
+faiss-cpu
+chromadb
+
+pypdf
+python-docx
+
+pandas
+numpy
+
+python-dotenv
+python-multipart
+
+sqlalchemy
+psycopg2-binary
+
+redis
+
+httpx
+requests
+
+tiktoken
+
+pytest
+
+pydantic
+pydantic-settings
+
+
+---
+
+# Step 2: Dockerfile
+
+dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn","app:app","--host","0.0.0.0","--port","8000"]
+
+
+---
+
+# Step 3: Streamlit Dockerfile
+
+Create another file.
+
+
+Dockerfile.streamlit
+
+
+dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8501
+
+CMD [
+"streamlit",
+"run",
+"streamlit_app.py",
+"--server.address=0.0.0.0",
+"--server.port=8501"
+]
+
+
+---
+
+# Step 4: .dockerignore
+
+
+venv/
+
+__pycache__/
+
+.pytest_cache/
+
+.git/
+
+vector_db/
+
+uploads/
+
+*.pyc
+
+
+This keeps images smaller.
+
+---
+
+# Step 5: docker-compose.yml
+
+yaml
+version: "3.9"
+
+services:
+
+  rag-api:
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: rag-api
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - ollama
+      - postgres
+      - redis
+
+    volumes:
+      - ./uploads:/app/uploads
+      - ./vector_db:/app/vector_db
+
+  streamlit:
+
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+
+    container_name: rag-ui
+
+    ports:
+      - "8501:8501"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - rag-api
+
+  ollama:
+
+    image: ollama/ollama
+
+    container_name: ollama
+
+    ports:
+      - "11434:11434"
+
+    volumes:
+      - ollama_data:/root/.ollama
+
+  postgres:
+
+    image: postgres:16
+
+    container_name: postgres
+
+    environment:
+
+      POSTGRES_DB: ragdb
+
+      POSTGRES_USER: raguser
+
+      POSTGRES_PASSWORD: ragpassword
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+
+    image: redis:7
+
+    container_name: redis
+
+    ports:
+      - "6379:6379"
+
+volumes:
+
+  postgres_data:
+
+  ollama_data:
+
+
+---
+
+# Step 6: .env
+
+ini
+APP_NAME=Enterprise RAG
+
+HOST=0.0.0.0
+
+PORT=8000
+
+OLLAMA_BASE_URL=http://ollama:11434
+
+OLLAMA_MODEL=llama3.2
+
+EMBEDDING_MODEL=nomic-embed-text
+
+VECTOR_DB=faiss
+
+VECTOR_DB_PATH=vector_db/faiss_index
+
+UPLOAD_DIR=uploads
+
+FASTAPI_URL=http://rag-api:8000
+
+POSTGRES_HOST=postgres
+
+POSTGRES_PORT=5432
+
+POSTGRES_DB=ragdb
+
+POSTGRES_USER=raguser
+
+POSTGRES_PASSWORD=ragpassword
+
+REDIS_HOST=redis
+
+REDIS_PORT=6379
+
+
+Notice:
+
+ini
+OLLAMA_BASE_URL=http://ollama:11434
+
+
+Not
+
+ini
+http://localhost:11434
+
+
+because containers communicate using **service names**.
+
+---
+
+# Step 7: Build Everything
+
+bash
+docker compose build
+
+
+---
+
+# Step 8: Start Containers
+
+bash
+docker compose up -d
+
+
+---
+
+# Step 9: Check Containers
+
+bash
+docker ps
+
+
+Expected:
+
+
+rag-api
+
+rag-ui
+
+ollama
+
+postgres
+
+redis
+
+
+---
+
+# Step 10: Download Models Inside Ollama Container
+
+The Ollama image doesn't include models. Download them once:
+
+bash
+docker exec -it ollama ollama pull llama3.2
+
+
+bash
+docker exec -it ollama ollama pull nomic-embed-text
+
+
+Verify:
+
+bash
+docker exec -it ollama ollama list
+
+
+---
+
+# Step 11: Open the Application
+
+FastAPI Swagger:
+
+
+http://localhost:8000/docs
+
+
+Streamlit:
+
+
+http://localhost:8501
+
+
+---
+
+# Step 12: Verify the Flow
+
+
+Upload PDF
+
+↓
+
+Streamlit
+
+↓
+
+FastAPI
+
+↓
+
+IngestionService
+
+↓
+
+PDF Loader
+
+↓
+
+Chunker
+
+↓
+
+Embedding
+
+↓
+
+FAISS
+
+↓
+
+Saved Index
+
+
+Then:
+
+
+Ask Question
+
+↓
+
+Streamlit
+
+↓
+
+FastAPI
+
+↓
+
+RAG Service
+
+↓
+
+FAISS Search
+
+↓
+
+ChatOllama
+
+↓
+
+Answer
+
+
+---
+
+# Production Best Practices
+
+Instead of one `docker-compose.yml`, many teams use multiple files:
+
+
+docker-compose.yml
+docker-compose.dev.yml
+docker-compose.prod.yml
+
+
+For production, you would also:
+
+* Use a reverse proxy such as Nginx or Traefik.
+* Add health checks for each service.
+* Store secrets outside `.env` (Docker Secrets, Vault, or cloud secret managers).
+* Use named volumes for persistent data (as shown for PostgreSQL and Ollama models).
+* Build images in CI/CD and deploy versioned images rather than building on the production server.
+
+This Docker setup is a solid foundation for developing and deploying your enterprise RAG application locally or as the basis for Kubernetes deployment later.
+
+
+
+
+-----------------------
+
+
+uvicorn app:app --reload
+
+http://localhost:8000/docs
+
+
+
+
+streamlit run streamlit_app.py
+
+http://localhost:8501
+
+
+
+=================================
+
+
+
+Below is a **production-ready `streamlit_app.py`** that works with the FastAPI backend we built in Parts 1–10.
+
+It supports:
+
+* ✅ Upload PDF/DOCX/CSV
+* ✅ Chat interface
+* ✅ Chat history
+* ✅ Clear Chat
+* ✅ Backend connection check
+* ✅ Loading spinner
+* ✅ Error handling
+
+---
+
+## streamlit_app.py
+
+
+import requests
+import streamlit as st
+
+# -----------------------------
+# Configuration
+# -----------------------------
+
+FASTAPI_URL = "http://localhost:8000"
+
+st.set_page_config(
+    page_title="Enterprise RAG",
+    page_icon="🤖",
+    layout="wide"
+)
+
+# -----------------------------
+# Session State
+# -----------------------------
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# -----------------------------
+# Sidebar
+# -----------------------------
+
+with st.sidebar:
+
+    st.title("📚 Enterprise RAG")
+
+    st.markdown("---")
+
+    st.subheader("Upload Document")
+
+    uploaded_file = st.file_uploader(
+        "Choose a PDF, DOCX or CSV",
+        type=["pdf", "docx", "csv"]
+    )
+
+    if uploaded_file is not None:
+
+        if st.button("Upload"):
+
+            files = {
+                "file": (
+                    uploaded_file.name,
+                    uploaded_file,
+                    uploaded_file.type
+                )
+            }
+
+            with st.spinner("Uploading document..."):
+
+                try:
+
+                    response = requests.post(
+                        f"{FASTAPI_URL}/upload",
+                        files=files,
+                        timeout=300
+                    )
+
+                    if response.status_code == 200:
+
+                        st.success("✅ Upload Successful")
+
+                    else:
+
+                        st.error(response.text)
+
+                except Exception as e:
+
+                    st.error(str(e))
+
+    st.markdown("---")
+
+    if st.button("🗑 Clear Chat"):
+
+        st.session_state.messages = []
+
+        st.rerun()
+
+# -----------------------------
+# Title
+# -----------------------------
+
+st.title("🤖 Enterprise RAG Chatbot")
+
+st.write(
+    "Upload documents and ask questions."
+)
+
+# -----------------------------
+# Health Check
+# -----------------------------
+
+try:
+
+    health = requests.get(
+        f"{FASTAPI_URL}/health",
+        timeout=5
+    )
+
+    if health.status_code == 200:
+
+        st.success("Backend Connected")
+
+    else:
+
+        st.error("Backend Not Healthy")
+
+except:
+
+    st.error("Cannot connect to FastAPI")
+
+# -----------------------------
+# Display Chat History
+# -----------------------------
+
+for message in st.session_state.messages:
+
+    with st.chat_message(message["role"]):
+
+        st.markdown(message["content"])
+
+# -----------------------------
+# Chat Input
+# -----------------------------
+
+question = st.chat_input(
+    "Ask your question..."
+)
+
+if question:
+
+    st.session_state.messages.append(
+        {
+            "role": "user",
+            "content": question
+        }
+    )
+
+    with st.chat_message("user"):
+
+        st.markdown(question)
+
+    with st.chat_message("assistant"):
+
+        with st.spinner("Thinking..."):
+
+            try:
+
+                response = requests.post(
+
+                    f"{FASTAPI_URL}/ask",
+
+                    json={
+                        "question": question
+                    },
+
+                    timeout=300
+                )
+
+                if response.status_code == 200:
+
+                    answer = response.json()["answer"]
+
+                else:
+
+                    answer = response.text
+
+            except Exception as e:
+
+                answer = str(e)
+
+            st.markdown(answer)
+
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": answer
+        }
+    )
+
+
+---
+
+# Run the Application
+
+### Start Ollama
+
+bash
+ollama serve
+
+
+---
+
+### Start FastAPI
+
+bash
+uvicorn app:app --reload
+
+
+---
+
+### Start Streamlit
+
+bash
+streamlit run streamlit_app.py
+
+
+---
+
+# Project Structure
+
+
+rag-enterprise/
+│
+├── app.py
+├── streamlit_app.py
+├── requirements.txt
+│
+├── api/
+├── services/
+├── config/
+├── loaders/
+├── chunking/
+├── embeddings/
+├── vectorstore/
+├── prompts/
+├── models/
+│
+├── uploads/
+├── documents/
+├── vector_db/
+│
+└── .env
+
+
+---
+
+## Production Improvements (Next Level)
+
+In a real enterprise application, I would improve this further by:
+
+* ✅ Reading `FASTAPI_URL` from `.env` instead of hardcoding it.
+* ✅ Streaming responses token-by-token from the backend.
+* ✅ Showing the uploaded document list.
+* ✅ Displaying document sources/citations with each answer.
+* ✅ Supporting multiple chat sessions.
+* ✅ Adding user authentication (login/logout).
+* ✅ Adding dark/light theme support.
+* ✅ Displaying response time and model information.
+* ✅ Allowing users to select different LLMs (e.g., Llama, Qwen, Mistral) from the UI.
+
+These enhancements make the application feel much closer to enterprise-grade RAG systems used in production.
+
+
+====================================
+
+
+
+
+**Short answer:** **No.** If your project is well structured (like the one we've built), you only need to change **a few files**, not the entire application.
+
+This is exactly why we separated the code into modules.
+
+---
+
+# Current Architecture (Ollama)
+
+
+User
+   │
+   ▼
+Streamlit
+   │
+   ▼
+FastAPI
+   │
+   ▼
+RAG Service
+   │
+   ├── Embedding Model (Ollama)
+   ├── FAISS
+   └── ChatOllama
+
+
+If you replace **Llama (Ollama)** with **Gemini**, FAISS, Streamlit, FastAPI, chunking, loaders, and prompts all remain the same.
+
+---
+
+# Files That DO NOT Change
+
+These remain exactly the same:
+
+
+streamlit_app.py
+
+app.py
+
+api/
+
+services/
+
+loaders/
+
+chunking/
+
+vectorstore/
+
+prompts/
+
+documents/
+
+uploads/
+
+Dockerfile
+
+docker-compose.yml (except environment variables if needed)
+
+
+Approximately **90% of the project stays unchanged**.
+
+---
+
+# Files That Change
+
+## 1. requirements.txt
+
+Remove:
+
+
+langchain-ollama
+ollama
+
+
+Add:
+
+
+langchain-google-genai
+google-generativeai
+
+
+Install:
+
+bash
+python -m pip install langchain-google-genai
+python -m pip install google-generativeai
+
+
+---
+
+## 2. .env
+
+Current:
+
+ini
+OLLAMA_MODEL=llama3.2
+OLLAMA_BASE_URL=http://localhost:11434
+EMBEDDING_MODEL=nomic-embed-text
+
+
+New:
+
+ini
+GOOGLE_API_KEY=your_api_key
+
+LLM_PROVIDER=gemini
+
+GEMINI_MODEL=gemini-2.5-flash
+
+EMBEDDING_MODEL=models/text-embedding-004
+
+
+No Ollama URL is needed.
+
+---
+
+## 3. models/chat_model.py
+
+Current:
+
+
+from langchain_ollama import ChatOllama
+
+llm = ChatOllama(
+    model=settings.OLLAMA_MODEL
+)
+
+
+New:
+
+
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+llm = ChatGoogleGenerativeAI(
+    model=settings.GEMINI_MODEL,
+    google_api_key=settings.GOOGLE_API_KEY
+)
+
+
+Only this file changes.
+
+---
+
+## 4. embeddings/embedding_model.py
+
+Current:
+
+
+from langchain_ollama import OllamaEmbeddings
+
+embedding = OllamaEmbeddings(
+    model=settings.EMBEDDING_MODEL
+)
+
+
+New:
+
+
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
+embedding = GoogleGenerativeAIEmbeddings(
+    model=settings.EMBEDDING_MODEL,
+    google_api_key=settings.GOOGLE_API_KEY
+)
+
+
+Again, only this file changes.
+
+---
+
+# Files That Do NOT Need Changes
+
+These continue to work without modification:
+
+
+docs = loader.load()
+
+chunks = splitter.split_documents(docs)
+
+vectorstore.add_documents(chunks)
+
+results = vectorstore.similarity_search(query)
+
+prompt = prompt_builder.build()
+
+answer = llm.invoke(prompt)
+
+
+The reason is that LangChain provides a consistent interface for different LLM providers.
+
+---
+
+# Architecture After Switching
+
+
+                Streamlit
+                     │
+                     ▼
+                 FastAPI
+                     │
+                     ▼
+                RAG Service
+                     │
+        ┌────────────┴────────────┐
+        ▼                         ▼
+Google Embeddings             Gemini LLM
+        │                         │
+        ▼                         ▼
+             FAISS Vector Store
+
+
+Notice that **only the AI provider changes**.
+
+---
+
+# Better Enterprise Design
+
+Instead of directly using `ChatOllama`, create an abstraction.
+
+
+models/
+│
+├── llm_factory.py
+├── ollama_model.py
+└── gemini_model.py
+
+
+Example:
+
+
+from config import settings
+
+if settings.LLM_PROVIDER == "ollama":
+    llm = OllamaModel()
+
+elif settings.LLM_PROVIDER == "gemini":
+    llm = GeminiModel()
+
+
+Then your `RAGService` simply does:
+
+
+llm = get_llm()
+
+answer = llm.invoke(prompt)
+
+
+Now you can switch providers by changing only:
+
+ini
+LLM_PROVIDER=gemini
+
+
+or
+
+ini
+LLM_PROVIDER=ollama
+
+
+without modifying the rest of the code.
+
+---
+
+# Even Better: Support Multiple Providers
+
+A production project can support several providers:
+
+
+models/
+│
+├── llm_factory.py
+├── ollama_model.py
+├── gemini_model.py
+├── openai_model.py
+├── groq_model.py
+└── anthropic_model.py
+
+
+Then changing the provider is just:
+
+ini
+LLM_PROVIDER=gemini
+
+
+or
+
+ini
+LLM_PROVIDER=openai
+
+
+or
+
+ini
+LLM_PROVIDER=ollama
+
+
+No changes to FastAPI, Streamlit, FAISS, chunking, or the RAG workflow are required.
+
+## Recommendation
+
+If you're building this as a portfolio project, I recommend implementing an **LLM factory** and an **embedding factory** from the beginning. That way your project can support Ollama, Gemini, OpenAI, Groq, or other providers with only configuration changes, making the architecture more flexible and closer to what many production systems use.
+
+
+
+
+===================================
+
+
+Yes. You can add **PostgreSQL** to your RAG application to store metadata and chat history while **continuing to use FAISS for vector search**.
+
+## 1. Update `requirements.txt`
+
+Add these packages:
+
+
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.11.7
+pydantic-settings==2.10.1
+
+langchain==0.3.27
+langchain-core==0.3.74
+langchain-community==0.3.29
+langchain-text-splitters==0.3.9
+langchain-ollama==0.3.7
+
+ollama==0.5.3
+faiss-cpu==1.12.0
+
+pypdf==6.0.0
+
+python-dotenv==1.1.1
+python-multipart==0.0.20
+
+requests==2.32.5
+httpx==0.28.1
+
+streamlit==1.49.1
+
+numpy==2.3.2
+pandas==2.3.2
+
+pytest==8.4.2
+
+# PostgreSQL
+sqlalchemy==2.0.43
+psycopg2-binary==2.9.10
+
+
+---
+
+# 2. Folder Structure
+
+
+rag-project/
+│
+├── database/
+│   ├── db.py
+│   ├── models.py
+│   └── crud.py
+│
+├── uploads/
+├── faiss_index/
+├── app.py
+├── .env
+└── requirements.txt
+
+
+---
+
+# 3. `.env`
+
+env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/ragdb
+
+
+---
+
+# 4. `database/db.py`
+
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from config import settings
+
+engine = create_engine(settings.DATABASE_URL)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+---
+
+# 5. `database/models.py`
+
+
+from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy.sql import func
+
+from database.db import Base
+
+
+class UploadedFile(Base):
+    __tablename__ = "uploaded_files"
+
+    id = Column(Integer, primary_key=True, index=True)
+    filename = Column(String(255))
+    filepath = Column(String(500))
+    upload_time = Column(DateTime, server_default=func.now())
+
+
+class ChatHistory(Base):
+    __tablename__ = "chat_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    question = Column(Text)
+    answer = Column(Text)
+    created_at = Column(DateTime, server_default=func.now())
+
+
+---
+
+# 6. `database/crud.py`
+
+
+from database.models import UploadedFile, ChatHistory
+
+
+def save_uploaded_file(db, filename, filepath):
+    file = UploadedFile(
+        filename=filename,
+        filepath=filepath
+    )
+
+    db.add(file)
+    db.commit()
+    db.refresh(file)
+
+    return file
+
+
+def save_chat(db, question, answer):
+    chat = ChatHistory(
+        question=question,
+        answer=answer
+    )
+
+    db.add(chat)
+    db.commit()
+    db.refresh(chat)
+
+    return chat
+
+
+---
+
+# 7. Create Tables (`app.py`)
+
+
+from database.db import Base, engine
+
+Base.metadata.create_all(bind=engine)
+
+
+Run this once when the application starts.
+
+---
+
+# 8. Save Uploaded PDFs
+
+
+from database.crud import save_uploaded_file
+
+save_uploaded_file(
+    db=db,
+    filename=file.filename,
+    filepath=file_path
+)
+
+
+---
+
+# 9. Save Chat History
+
+
+from database.crud import save_chat
+
+save_chat(
+    db=db,
+    question=user_question,
+    answer=llm_answer
+)
+
+
+---
+
+# 10. Architecture
+
+
+             Upload PDF
+                  │
+                  ▼
+             Save PDF
+                  │
+        ┌─────────┴─────────┐
+        ▼                   ▼
+ PostgreSQL           PyPDF Loader
+(File Metadata)            │
+                            ▼
+                     Text Splitter
+                            │
+                            ▼
+                  Ollama Embeddings
+                            │
+                            ▼
+                         FAISS
+                            │
+                            ▼
+                      Similarity Search
+                            │
+                            ▼
+                      Ollama LLM
+                            │
+                            ▼
+                    Generated Answer
+                            │
+                            ▼
+                PostgreSQL (Chat History)
+
+
+### What PostgreSQL stores
+
+* Uploaded PDF metadata (filename, path, upload time)
+* Chat history (question, answer, timestamp)
+* Future user accounts, sessions, and feedback (if you add them)
+
+### What FAISS stores
+
+* Document embeddings
+* Vector similarity index for retrieval
+
+This separation is a common production pattern: **PostgreSQL handles structured application data, while FAISS provides fast vector search.**
+
+
+===========================================
+
+
+
+
+Yes. Below is a simple way to integrate **Redis caching** into your FastAPI + Ollama + FAISS RAG application.
+
+---
+
+## 1. Install Redis
+
+Add this to your `requirements.txt`:
+
+
+redis==6.4.0
+
+
+or install it directly:
+
+bash
+pip install redis
+
+
+---
+
+# 2. Run Redis (Docker)
+
+bash
+docker run -d \
+  --name redis \
+  -p 6379:6379 \
+  redis:8
+
+
+or with Docker Compose:
+
+yaml
+services:
+  redis:
+    image: redis:8
+    ports:
+      - "6379:6379"
+
+
+---
+
+# 3. .env
+
+env
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+
+
+---
+
+# 4. config.py
+
+
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_DB: int
+
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()
+
+
+---
+
+# 5. redis_client.py
+
+
+import redis
+
+from config import settings
+
+
+redis_client = redis.Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=settings.REDIS_DB,
+    decode_responses=True
+)
+
+
+---
+
+# 6. cache.py
+
+
+import json
+
+from redis_client import redis_client
+
+
+CACHE_TTL = 3600
+
+
+def get_cache(question: str):
+
+    return redis_client.get(question)
+
+
+def set_cache(question: str, answer: str):
+
+    redis_client.setex(
+        question,
+        CACHE_TTL,
+        answer
+    )
+
+
+---
+
+# 7. Use Redis in your RAG service
+
+
+from cache import get_cache, set_cache
+
+
+def ask_question(question: str):
+
+    # 1. Check Redis first
+    cached_answer = get_cache(question)
+
+    if cached_answer:
+        print("Answer from Redis")
+        return cached_answer
+
+    # 2. Search FAISS
+    docs = retriever.invoke(question)
+
+    context = "\n".join(
+        doc.page_content
+        for doc in docs
+    )
+
+    prompt = f"""
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
+
+    # 3. Call Ollama
+    response = llm.invoke(prompt)
+
+    answer = response.content
+
+    # 4. Save in Redis
+    set_cache(question, answer)
+
+    return answer
+
+
+---
+
+# 8. Optional: Delete cache
+
+
+from redis_client import redis_client
+
+
+def clear_cache():
+
+    redis_client.flushdb()
+
+
+---
+
+# 9. Optional: Check Redis health
+
+
+from redis_client import redis_client
+
+
+print(redis_client.ping())
+
+
+Output:
+
+
+True
+
+
+---
+
+# Project Structure
+
+
+rag-project/
+│
+├── cache.py
+├── redis_client.py
+├── config.py
+├── .env
+│
+├── services/
+│   └── rag_service.py
+│
+├── vectorstore/
+├── llm/
+├── uploads/
+├── faiss_index/
+└── app.py
+
+
+---
+
+## How it works
+
+
+User Question
+      │
+      ▼
+Check Redis Cache
+      │
+ ┌────┴────┐
+ │         │
+Hit       Miss
+ │         │
+ ▼         ▼
+Return   Search FAISS
+Answer        │
+              ▼
+        Generate Answer
+              │
+              ▼
+      Store in Redis
+              │
+              ▼
+        Return Answer
+
+
+This integration caches answers to repeated questions, reducing response time and avoiding repeated FAISS retrieval and LLM inference. For a production application, you would typically generate cache keys (for example, by hashing normalized questions) instead of using the raw question text directly, and you would add error handling around Redis operations so the application continues to work if Redis is temporarily unavailable.
+
+
+
+
+
+
+
+
+
+
+
+
