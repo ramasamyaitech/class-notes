@@ -1,0 +1,172 @@
+Day 1 — Python Basics
+
+ Python installation and IDE
+ Variables and data types
+ int, float, str, bool
+ Input/output
+ Type conversion
+ Operators
+ Comments
+ Basic programs
+ Practice: calculator, temperature converter, simple salary calculation
+
+
+
+
+Day 2 — Strings & Collections
+
+ String indexing and slicing
+ String methods
+ Lists
+ Tuples
+ Sets
+ Dictionaries
+ List/dictionary operations
+ Practice: employee details, product catalog
+
+
+
+
+Day 3 — Conditions & Loops
+
+ if, elif, else
+ Nested conditions
+ for loop
+ while loop
+ break, continue, pass
+ range()
+ Nested loops
+ Practice: numbers, patterns, employee filtering
+
+
+
+
+Day 4 — Functions
+
+ Creating functions
+ Parameters and arguments
+ Return values
+ Default arguments
+ args and kwargs
+ Lambda functions
+ Scope
+ Built-in functions
+ Practice: reusable data-processing functions
+
+
+
+
+Day 5 — File Handling & Exceptions
+
+ Reading text files
+ Writing files
+ CSV files
+ JSON files
+ with open()
+ Exception handling
+ try, except, else, finally
+ Custom exceptions
+ Practice: read employee CSV and generate output
+
+
+
+
+Day 6 — Object-Oriented Programming
+
+ Classes and objects
+ __init__
+ Instance variables
+ Methods
+ Inheritance
+ Encapsulation
+ Polymorphism
+ Class/static methods
+ Practice: Employee and BankAccount classes
+
+
+
+
+Day 7 — Advanced Python
+
+ List comprehension
+ Dictionary comprehension
+ Set comprehension
+ Generators
+ Iterators
+ yield
+ map()
+ filter()
+ zip()
+ enumerate()
+ sorted()
+ Practice: transform and filter datasets
+
+
+
+
+Day 8 — Python for Data Engineering
+
+Focus heavily on this day.
+
+ NumPy basics
+ Pandas
+ DataFrame and Series
+ Reading CSV/JSON/Excel
+ Selecting columns
+ Filtering rows
+ groupby()
+ merge()
+ join()
+ Handling null values
+ Removing duplicates
+ Sorting
+ Aggregation
+
+Example flow:
+
+CSV → Pandas → Clean Data → Transform → CSV/Database
+
+
+
+
+Day 9 — Python + Database + APIs
+
+ SQL connection from Python
+ SQLite basics
+ SQLAlchemy basics
+ requests library
+ REST API
+ GET/POST/PUT/DELETE
+ JSON response handling
+ Environment variables
+ Logging
+ Basic project structure
+
+Practice:
+
+API → Python → Transform JSON → Database
+
+
+
+
+Day 10 — Real-Time Project
+
+Build a small Employee Data Pipeline.
+
+Project flow:
+
+CSV/API → Python → Pandas → Data Cleaning → Database → Report
+
+Implement:
+
+ Read employee data
+ Validate records
+ Handle missing values
+ Remove duplicates
+ Transform columns
+ Calculate salary statistics
+ Load data into SQLite
+ Query the database
+ Create summary output
+ Add exception handling
+ Add logging
