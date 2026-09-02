@@ -1,0 +1,168 @@
+* while condition  
+
+for(let i=1; i<=100; i++){
+        console.log(i);
+        console.log("Hi welcome");
+      }
+
+
+    let i=1;
+    while(i<=100){
+        console.log(i);
+        console.log("Hi welcome");
+        i++;
+    }
+
+-------------------------------------------------------------
+* do while condition  
+    let i=101;
+
+    do{
+        console.log(i);
+        console.log("Hi welcome");
+        i++
+    } while(i<=100)
+---------------------------------------------------------------------
+
+    var arr = [10,21,35,47,59,67,76,84,93,"hi", false, true]    
+
+    for(let i=0; i<=arr.length-1; i++){
+        console.log(arr[i]);
+    }
+--------------------------------------------------------------------
+
+    var mydate= new Date()
+
+    var day = mydate.getDay();
+
+    switch (day) {
+            case 0:
+            console.log("Today is Sunday");
+            break;
+            case 1:
+            console.log("Today is Monday");
+            break;
+            case 2:
+            console.log("Today is Tuesday");
+            break;
+            case 3:
+            console.log("Today is Wednesday");
+            break;
+            case 4:
+            console.log("Today is Thursday");
+            break;
+            case 5:
+            console.log("Today is Friday");
+            break;
+            case 6:
+            console.log("Today is Saturday");
+            
+        }
+
+
+////////////////////////////////////////////////////////////////
+
+
+ <input type="text" id="mytext">
+    
+    <button onclick="getText()">CLICK</button>
+    <h1 id="result"></h1>
+
+
+
+  <script>
+     
+      function getText(){
+           var textval = document.getElementById("mytext").value;
+           document.getElementById("result").innerHTML = textval.toLowerCase();
+      }
+  </script>
+
+//////////////////////////////////////////////////////////////////////////
+
+ <input type="text" id="mytext">
+    
+    <button onclick="getText()">CLICK</button>
+    <h1 id="result"></h1>
+
+
+
+  <script>
+     
+      function getText(){
+           var textval = document.getElementById("mytext").value;
+           document.getElementById("result").innerHTML = textval.toUpperCase();
+      }
+  </script>
+
+///////////////////////////////////////////////////////////////////////////
+
+ <input type="text" id="mytext">
+      <button onclick="getText()">CLICK</button>
+      <h1 id="result"></h1>
+
+
+
+    <script>
+        //loops
+        function getText(){
+             var textval = document.getElementById("mytext").value;
+             if(textval === textval.toUpperCase()){
+                  document.getElementById("result").innerHTML = textval.toLowerCase();
+                }else{
+                 document.getElementById("result").innerHTML = textval.toUpperCase();
+                 
+             }
+             
+        }
+    </script>
+
+////////////////////////////////////////////////
+
+<input type="text" id="mytext">
+      <button onclick="getText()">CLICK</button>
+      <h1 id="result"></h1>
+
+
+
+    <script>
+ 
+        //loops
+        function getText(){
+           var textval = document.getElementById("mytext").value;
+              
+           var temp ="";
+
+           for(var i=0;i<textval.length;i++){
+                temp += textval[i] === textval[i].toUpperCase()  ?  textval[i].toLowerCase() : textval[i].toUpperCase();                
+           }
+           document.getElementById("result").innerHTML = temp;
+        }
+    </script>
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+<input type="text" id="name">
+      <button onclick="getName()">CLICK</button> 
+      <h2 id="nameresult"></h2>
+      <h4 id="error"></h4>
+
+    <script>
+ 
+      function getName(){
+          let nameval = document.getElementById("name").value;
+          if(nameval.length>5){
+              document.getElementById("nameresult").innerHTML = nameval;
+              document.getElementById("error").innerHTML = `<span style="color:green">Correct Input...</span>`;
+              
+          }else{
+              document.getElementById("nameresult").innerHTML = nameval;
+              document.getElementById("error").innerHTML = `<span style="color:red">Wrong Input...</span>`;
+             
+          }
+      }
+    
+    </script>
+
+

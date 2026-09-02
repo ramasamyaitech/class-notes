@@ -1,0 +1,101 @@
+ <ul id="list">
+       
+    </ul>
+ 
+    <script>
+        var numbers="";        
+
+        for(var i=1;i<=20;i++){
+           numbers += `<li>${i}</li>`;
+        }
+        document.getElementById("list").innerHTML = numbers;
+    </script>
+
+
+///////////////////////////////////////////
+
+<ul id="list">
+       
+    </ul>
+ 
+    <script>
+        var numbers="";   
+
+        for(var i=1;i<=20;i++){
+            numbers += i%2==0 ? `<li style='color:green;font-size:30px'>${i}</li>` : `<li style="color:red;font-size:30px">${i}</li>`;       
+        }
+        document.getElementById("list").innerHTML = numbers;
+    </script>
+
+//////////////////////////////////////////////////////////////////////////
+
+<input type="text" id="inputval">
+    <button onclick="addList()">ADD LIST</button>
+    <button onclick="removeList()">REMOVE LIST</button>
+    <ul id="list">
+        
+    </ul>    
+ 
+    <script>
+        function addList(){
+            var val = document.getElementById("inputval").value;         
+            var text = document.createTextNode(val)
+            if(text.length>0){
+            var li = document.createElement("li");
+             console.log(text);
+            }           
+                 li.appendChild(text)
+                 console.log(li);
+                 console.log(text.length);
+             
+            
+             var ul = document.getElementById("list")
+             ul.append(li);
+             console.log(ul)
+             val.value= "";
+             
+        }
+
+        function removeList(){
+             var list = document.getElementById("list");
+             list.removeChild(list.lastElementChild)
+        }
+    </script>
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+    <input type="text" id="inputval" placeholder="Please enter the Mark">
+    <button onclick="addList()">ADD LIST</button>
+    <button onclick="removeList()">REMOVE LIST</button>
+
+    <ul id="list" class="sad">
+        
+    </ul>       
+ 
+    <script>
+        function addList(){      
+           var num=document.getElementById("inputval").value;     
+
+           var texts = document.createTextNode(document.getElementById("inputval").value);
+                      
+           var li = document.createElement("li");
+           var span = document.createElement("span");
+           if(parseInt(num)>=35){
+              span.style.color = "green"
+           }else{
+              span.style.color = "red"
+           }
+           span.appendChild(texts);
+           li.appendChild(span);
+           var ul = document.getElementById("list");
+           ul.append(li);
+                    
+        }
+
+        function removeList(){
+            var list = document.getElementById("list")
+            list.removeChild(list.firstElementChild)
+        }
+    </script>

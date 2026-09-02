@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>    
+
+    <script>
+
+        // function normalfunc(){
+        //      console.log("hi im normal function");
+        //      console.log(5+5);
+        //      console.log(5*5);             
+        // }      
+        // normalfunc();
+
+        // let anonymousfunc = function(){
+        //     console.log("hi im anonymous function");
+        //      console.log(5+5);
+        //      console.log(5*5);
+        // }
+
+        // anonymousfunc();
+
+        // (function selfinvokingfunc(){
+        //     console.log("Self Invoiking function or immediate invloking function");
+        //     console.log(100+100);
+        // }())
+
+        // let arrowfunc = ()=>{
+        //     console.log("This is arrow function it comes from es6 feature");
+        // }
+        // arrowfunc();
+
+
+
+        // var str1 = "rajanramraj"
+
+        // console.log(str1.indexOf("j"));
+
+        // console.log(str1.lastIndexOf("j"));
+
+        // console.log(str1[str1.length - 1])
+
+
+        var name1="Ramasamy"
+        var name2 = "RaJaMOORthi, sbala"
+
+        console.log(name1.toUpperCase());
+        console.log(name2.toLowerCase());
+        console.log(name2.slice(4,11));
+        console.log(name1.concat(name2))
+        console.log(name2.replace("bala","raja"));
+        console.log(name2.includes("MOOr"));
+        console.log(name2.repeat(5));
+        console.log(name2.charAt(7))
+        console.log(name2.charCodeAt(7))
+        console.log(String.fromCharCode(115));
+        console.log(name2.substr(3,9))
+        console.log(name2.startsWith("R"));
+        console.log(name2.endsWith("sbala"));
+        console.log(name2.split(""));
+
+
+    </script>
+
+</body>
+
+</html>

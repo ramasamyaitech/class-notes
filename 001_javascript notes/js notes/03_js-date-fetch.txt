@@ -1,0 +1,68 @@
+ <div class="container">
+        <div class="time">
+            <h2 id="hour"></h2>
+            <h2 id="mins"></h2>
+            <h2 id="secs"></h2>
+        </div>
+   </div>
+
+ <script>
+       
+     function getTimeandHours(){
+         let mydate = new Date();
+       let h = mydate.getHours();
+       let m = mydate.getMinutes();
+       let s = mydate.getSeconds();
+       document.getElementById("hour").innerHTML = h +"H";
+       document.getElementById("mins").innerHTML = m +"M";
+       document.getElementById("secs").innerHTML = s +"S";
+     }
+
+     setInterval(()=>{
+        getTimeandHours();
+     },1000)
+      
+
+
+ </script>
+
+-----------------------------------------------------
+
+
+ <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>album id</th>
+                <th>Image</th>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody id="table">
+
+        </tbody>
+
+    <script>
+        fetch("https://jsonplaceholder.typicode.com/photos")
+        .then((res)=>{
+            
+            return res.json()
+            
+        })
+        .then((res)=>{
+                 var output="";
+                 for(var i =0;i<res.length;i++){
+
+                  output += `<tr>`;
+
+                  output += `<td>${res[i].id}</td>`;
+                  output += `<td>${res[i].albumId}</td>`;
+                  output += `<td>${res[i].title}</td>`;
+                  output += `<td><img src=${res[i].thumbnailUrl}/></td>`;
+                  output += `</tr>`;
+               }
+               document.getElementById("table").innerHTML = output;
+          })
+    </script>
+
+

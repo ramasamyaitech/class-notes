@@ -1,0 +1,44 @@
+AI Agent Fundamentals:
+
+
+What is an AI agent?
+Chatbot vs workflow vs agent
+Agent loop
+Reasoning and action
+Tool selection
+Function calling
+
+Agent state
+Short-term memory
+Long-term memory concepts
+Planning
+Reflection concepts
+Human-in-the-loop workflows
+
+Agent guardrails
+Error recovery
+Retry strategies
+Deterministic vs agentic workflows
+
+
+
+
+LangGraph & Multi-Step AI Systems:
+
+
+Graph-based AI workflows
+Nodes and edges
+State management
+Conditional routing
+Tool nodes
+
+Human approval steps
+Persistence
+Checkpointing
+Error handling
+Multi-agent architecture
+
+Supervisor agents
+Specialist agents
+Agent communication
+When not to use multi-agent systems

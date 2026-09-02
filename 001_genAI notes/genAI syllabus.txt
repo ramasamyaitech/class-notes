@@ -1,0 +1,471 @@
+Day 1 — Generative AI Fundamentals
+
+ What is AI, ML, Deep Learning, GenAI
+ Traditional AI vs Generative AI
+ What is an LLM?
+ ChatGPT and other LLM applications
+ Tokens, context window, parameters
+ LLM training vs inference
+ Use cases of GenAI
+
+Practice: Use ChatGPT and identify where GenAI is being used.
+
+
+
+
+
+Day 2 — LLM Fundamentals
+
+ Transformer architecture
+ Encoder vs Decoder
+ Attention mechanism
+ Self-attention
+ Pre-training and fine-tuning
+ Tokenization
+ Temperature
+ Top-K and Top-P
+ Context window
+
+Interview focus: Explain how an LLM generates an answer.
+
+
+
+
+
+Day 3 — Prompt Engineering
+
+Learn:
+
+ System prompt
+ User prompt
+ Context
+ Instructions
+ Zero-shot prompting
+ Few-shot prompting
+ Chain-of-thought concept
+ Role prompting
+ Structured output
+ Prompt templates
+
+Practice: Create prompts for summarization, extraction, classification and Q&A.
+
+
+
+
+
+Day 4 — Python for GenAI
+
+Focus on the Python needed for GenAI:
+
+ Functions
+ Classes
+ Lists/dictionaries
+ JSON
+ Exception handling
+ requests
+ .env and environment variables
+ API calls
+ Async basics
+
+Practice: Write a Python program that calls an LLM API and prints the response.
+
+
+
+
+Day 5 — LLM APIs
+
+Learn how applications communicate with LLMs.
+
+Topics:
+
+ API key
+ Request/response
+ Chat completion
+ Streaming response
+ Token usage
+ Temperature
+ Model selection
+ Cost optimization
+ Rate limits
+ Error handling
+
+Understand the flow:
+
+User → Backend → LLM API → Response → Frontend
+
+
+
+
+Day 6 — Embeddings & Vector Databases
+
+Very important for RAG.
+
+Learn:
+
+ What is an embedding?
+ Text → vector
+ Semantic similarity
+ Cosine similarity
+ Vector dimensions
+ Embedding models
+ Vector databases
+
+Study:
+
+ FAISS
+ ChromaDB
+ Pinecone
+
+Understand:
+
+Text → Embedding → Vector DB → Similarity Search
+
+
+
+
+Day 7 — RAG Fundamentals
+
+Learn Retrieval-Augmented Generation.
+
+Architecture:
+
+PDF/Documents → Chunking → Embeddings → Vector DB
+
+Then:
+
+User Question → Embedding → Similarity Search → Relevant Chunks → LLM → Answer
+
+Learn:
+
+ Why RAG is needed
+ Chunking
+ Chunk size
+ Chunk overlap
+ Top-K
+ Similarity threshold
+ Metadata
+ Retrieval
+ Generation
+
+
+
+
+
+Day 8 — Build a RAG Application
+
+Build a simple PDF chatbot.
+
+Technology:
+
+ Python
+ LangChain
+ Ollama/OpenAI/Gemini
+ FAISS or ChromaDB
+ FastAPI
+ Streamlit
+
+Project:
+
+PDF → Loader → Splitter → Embedding → FAISS → Retriever → LLM
+
+Practice with an AWS/Data Engineering PDF.
+
+
+
+
+
+Day 9 — LangChain
+
+Learn:
+
+ LangChain architecture
+ Models
+ Prompts
+ Output parsers
+ Document loaders
+ Text splitters
+ Embeddings
+ Retrievers
+ Chains
+ LCEL
+ Memory concepts
+ Callbacks/streaming
+
+Build a simple:
+
+Question → Prompt → LLM → Answer
+
+Then:
+
+Question → Retriever → Context → Prompt → LLM
+
+
+
+
+
+Day 10 — Advanced RAG
+
+Learn how to improve basic RAG.
+
+Topics:
+
+ Hybrid search
+ Keyword + semantic search
+ Metadata filtering
+ Re-ranking
+ Query transformation
+ Multi-query retrieval
+ Parent-child retrieval
+ Context compression
+ RAG evaluation
+ Hallucination reduction
+
+Understand the difference between:
+
+Basic RAG → Advanced RAG → Production RAG
+
+
+
+
+
+
+Day 11 — FastAPI + GenAI
+
+Learn how to expose your GenAI application as an API.
+
+Architecture:
+
+Frontend → FastAPI → RAG → Vector DB → LLM
+
+Learn:
+
+ FastAPI routes
+ POST/GET
+ Pydantic
+ File upload
+ CORS
+ Async
+ Streaming
+ Error handling
+
+Build:
+
+POST /upload
+
+POST /chat
+
+GET /health
+
+
+
+
+
+Day 12 — GenAI Agents
+
+Learn the difference between:
+
+LLM → RAG → Agent
+
+Agent concepts:
+
+ Agent
+ Tool
+ Function calling
+ Planning
+ Reasoning
+ Tool selection
+ Memory
+ Agent loop
+
+Example:
+
+User: "Find today's weather and summarize it."
+
+Agent:
+
+User → LLM → Weather Tool → Result → LLM → Final Answer
+
+Study LangGraph for stateful agent workflows.
+
+
+
+
+
+Day 13 — MCP + Multi-Agent Systems
+
+Learn:
+
+ What is MCP?
+ MCP client
+ MCP server
+ Tools
+ Resources
+ Prompts
+ Agent-to-tool communication
+
+Then learn multi-agent architecture:
+
+Supervisor Agent
+
+↓
+
+Research Agent | SQL Agent | Coding Agent
+
+↓
+
+Final Response
+
+Understand when to use:
+
+ Single agent
+ Multi-agent
+ RAG
+ Traditional APIs
+
+
+
+
+
+Day 14 — Production GenAI
+
+This day is extremely important for real projects/interviews.
+
+Learn:
+
+ LLM cost optimization
+ Token optimization
+ Caching
+ Rate limiting
+ Logging
+ Monitoring
+ Guardrails
+ Prompt injection
+ Data privacy
+ Authentication
+ Evaluation
+ Hallucination handling
+ Model fallback
+ Docker deployment
+
+Architecture:
+
+React/Streamlit
+
+↓
+
+FastAPI
+
+↓
+
+LangChain/LangGraph
+
+↓
+
+RAG / Agents
+
+↓
+
+Vector DB + LLM
+
+↓
+
+AWS
+
+
+
+
+
+
+
+Day 15 — Complete GenAI Project + Interview Preparation
+
+Build one complete project:
+
+Enterprise Document Intelligence / Banking RAG Chatbot
+
+Architecture:
+
+PDF / DOCX / CSV
+
+↓
+
+S3
+
+↓
+
+Document Processing
+
+↓
+
+Chunking
+
+↓
+
+Embeddings
+
+↓
+
+Vector Database
+
+↓
+
+Retriever
+
+↓
+
+LLM
+
+↓
+
+FastAPI
+
+↓
+
+React/Streamlit
+
+Add:
+
+ Authentication
+ Chat history
+ Streaming
+ Metadata filtering
+ Logging
+ Error handling
+ Docker
+ AWS deployment
+
+Important Interview Questions to Practice
+
+1. What is Generative AI?
+2. What is an LLM?
+3. How does ChatGPT work?
+4. What is a Transformer?
+5. What is tokenization?
+6. What is an embedding?
+7. What is a vector database?
+8. Why do we need RAG?
+9. Explain the complete RAG architecture.
+10. What is chunking?
+11. How do you choose chunk size?
+12. FAISS vs ChromaDB vs Pinecone?
+13. LangChain vs LangGraph?
+14. What is an AI Agent?
+15. RAG vs Fine-tuning?
+16. What is function calling?
+17. What is MCP?
+18. Single-agent vs multi-agent?
+19. How do you reduce LLM cost?
+20. How do you prevent hallucination?
+21. How do you handle prompt injection?
+22. How do you deploy a GenAI application?
+23. How do you monitor an LLM application?
+24. How do you stream LLM responses to the frontend?
+25. Explain your GenAI project end-to-end.
+
+Recommended Priority
+
+If your goal is GenAI developer/interview preparation, prioritize:
+
+LLM → Prompt Engineering → Embeddings → Vector DB → RAG → LangChain → FastAPI → Agents → LangGraph → MCP → Production GenAI
+
+Don't spend too much time initially on the mathematical details of Transformer architecture. First become capable of building and explaining a complete GenAI application, then go deeper into internals.
